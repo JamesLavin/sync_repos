@@ -1,7 +1,11 @@
 defmodule SyncRepos.CLI do
+
+  alias SyncRepos.Calcurse
+
   def main(args \\ []) do
     args
     |> parse_args
+    |> Calcurse.sync
     |> response
     |> IO.puts()
   end
