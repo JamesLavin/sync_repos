@@ -11,6 +11,8 @@ defmodule SyncRepos.Git do
       |> Map.put(:to_process, more_dirs)
       |> Map.put(:processing, %{dir: dir, halt: false})
       |> cd_to_git_dir()
+      |> get_branch()
+      |> halt_unless_master()
       # |> ls_files()
       |> git_status()
 
@@ -34,6 +36,26 @@ defmodule SyncRepos.Git do
     {:ok, files} = File.ls()
     files |> IO.puts()
     args
+  end
+
+  defp get_branch(args) do
+    {branch, 0} = System.cmd("git", ["rev-parse", "--abbrev-ref", "HEAD"])
+
+    args
+    |> put_in([:processing, :branch], branch |> String.trim())
+  end
+
+  defp halt_unless_master(%{processing: %{branch: "master"}} = args) do
+    args
+  end
+
+  defp halt_unless_master(%{processing: %{branch: branch}} = args) do
+    args
+    |> put_in([:processing, :halt], true)
+    |> put_in(
+      [:processing, :halt_reason],
+      "*** FAILURE: Branch '#{branch}' is currently checked out ***"
+    )
   end
 
   defp git_status(args) do

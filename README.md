@@ -4,11 +4,13 @@ Keep all your local `Git` repos in sync with remote `Git` repos by running a sin
 
 `SyncRepos` will attempt to pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo.
 
+`SyncRepos` will halt trying to sync a repo if the local copy of that repo contains any unstaged changes in tracked files.
+
 ## Usage
 
-**WARNING**: `SyncRepos` currently works only with `master` Git branches. *Don't add a repo to `~/.sync_repos/config` unless you have the `master` branch checked out.* (I hope to generalize this in the future.)
+**NOTE**: `SyncRepos` currently skips any Git repo with a checked-out branch other than `master`. If the checked-out branch of any repo you added to `~/.sync_repos/config` isn't `master`, `SyncRepos` should skip that repo. (I hope to generalize this tool to work with non-`master` branches.)
 
-1) Pull down the executable, [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) (or generate it by pulling down this repo and running `mix escript.build` in this directory)
+1) Pull down the executable, [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) (or generate it by pulling down this repo and running `mix escript.build` in this directory... for which you'll need `Elixir` and `Mix` installed)
 
 2) Make sure the binary file is executable (`chmod u+x sync_repos`)
 
@@ -43,8 +45,6 @@ From github.com:commanded/commanded
 ----- finished syncing /Users/jameslavin/Git/commanded -----
 
 ----- syncing /Users/jameslavin/Git/conduit -----
-From github.com:slashdotdash/conduit
- * branch            master     -> FETCH_HEAD
 ----- finished syncing /Users/jameslavin/Git/conduit -----
 
 ----- syncing /Users/jameslavin/Git/ecto -----
@@ -110,7 +110,8 @@ To github.com:JamesLavin/tech_management.git
     %{dir: "/Users/jameslavin/Git/eventstore"},
     %{dir: "/Users/jameslavin/Git/elixir"},
     %{dir: "/Users/jameslavin/Git/ecto"},
-    %{dir: "/Users/jameslavin/Git/conduit"},
+    %{dir: "/Users/jameslavin/Git/conduit",
+      halt_reason: "*** FAILURE: Branch 'my_feature' is currently checked out ***"},
     %{dir: "/Users/jameslavin/Git/commanded"},
     %{dir: "/Users/jameslavin/Git/absinthe"}
   ],
@@ -146,11 +147,10 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
 ## IDEAS FOR FUTURE
 
-* Currently assumes master branch is checked out: Check this assumption before pulling.
 * Improve documentation
 * Upload to Hex
 * Add option to use non-standard file location
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
-* Currently assumes master branch is checked out: Make this work with non-master branches
+* Currently works only when `master` branch is checked out: Make this work with non-`master` branches
 * Option to suppress saving all log files and instead save only the latest log file (or the last N log files?)
