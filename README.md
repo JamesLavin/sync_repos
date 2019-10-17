@@ -8,9 +8,15 @@ Keep all your local `Git` repos in sync with remote `Git` repos by running a sin
 
 **WARNING**: `SyncRepos` currently works only with `master` Git branches. *Don't add a repo to `~/.sync_repos/config` unless you have the `master` branch checked out.* (I hope to generalize this in the future.)
 
-1) Create a `~/.sync_repos` directory.
+1) Pull down the executable, [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) (or generate it by pulling down this repo and running `mix escript.build` in this directory)
 
-2) Create a `~/.sync_repos/config` YAML file specifying the `Git` directories on your local machine that you wish to keep synched up with remote `Git` repos, like this:
+2) Make sure the binary file is executable (`chmod u+x sync_repos`)
+
+3) Put the executable somewhere on your `$PATH` (or else you'll need to execute it directly -- as `./sync_repos` -- from within the same directory)
+
+4) Create a `~/.sync_repos` directory.
+
+5) Create a `~/.sync_repos/config` YAML file specifying the `Git` directories on your local machine that you wish to keep synched up with remote `Git` repos, like this:
 
 ```
 git:
@@ -22,7 +28,7 @@ git:
   - ~/Git/sync_repos
 ```
 
-3) Run `./sync_repos` to sync all your Git repos. (If you want full debugging output, run `./sync_repos --debug`.) You will see output like the following:
+6) Run `sync_repos` to sync all your Git repos. (If you want full debugging output, run `./sync_repos --debug`.) You will see output like the following:
 
 ```
 Jamess-MacBook-Pro:sync_repos jameslavin$ ./sync_repos
@@ -115,7 +121,7 @@ To github.com:JamesLavin/tech_management.git
 }
 ```
 
-4) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
+7) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
 
 NOTE: The current behavior is to halt on the first failure, but I intend to change the default behavior to attempt to sync each repo, regardless of what happens while attempting to sync other repos.
 
