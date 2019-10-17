@@ -1,4 +1,7 @@
 defmodule SyncRepos.Git do
+  @successful_pull_msg "Successfully pulled new changes from master"
+  @no_remote_changes_msg "No new changes on master"
+
   def sync(%{halt: true} = token), do: token
 
   def sync(%{to_process: []} = token), do: token
@@ -155,20 +158,22 @@ defmodule SyncRepos.Git do
     cond do
       # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
       Regex.match?(~r/Updating.*Fast-forward/s, output) ->
-        IO.puts("Successfully pulled new changes from master")
+        IO.puts(@successful_pull_msg)
         put_in(token, [:processing, :changes_pulled], true)
 
       Regex.match?(~r/Fast-forwarded master to/s, output) ->
-        IO.puts("Successfully pulled new changes from master")
+        IO.puts(@successful_pull_msg)
+        put_in(token, [:processing, :changes_pulled], true)
+
+      Regex.match?(~r/rewinding head to replay your work/, output) ->
+        IO.puts(@successful_pull_msg)
         put_in(token, [:processing, :changes_pulled], true)
 
       Regex.match?(~r/Already up to date/, output) ->
-        msg = "No new changes on master"
-        put_in(token, [:processing, :info], msg)
+        put_in(token, [:processing, :info], @no_remote_changes_msg)
 
       Regex.match?(~r/Current branch master is up to date/, output) ->
-        msg = "No new changes on master"
-        put_in(token, [:processing, :info], msg)
+        put_in(token, [:processing, :info], @no_remote_changes_msg)
 
       true ->
         msg = "*** WARNING: Something unexpected happened: #{output} ***"
