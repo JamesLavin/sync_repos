@@ -1,13 +1,10 @@
 defmodule SyncRepos.CLI do
-  alias SyncRepos.Git
+  alias SyncRepos.{Git, Timestamp}
 
   @default_args %{
+    sync_dir: "~/.sync_repos",
     halt: false,
-    to_process: [
-      #  "/Users/jameslavin/Git/elixir",
-      #  "/Users/jameslavin/.calcurse",
-      #  "/Users/jameslavin/Git/sync_repos"
-    ],
+    to_process: [],
     processing: nil,
     processed: []
   }
@@ -18,6 +15,7 @@ defmodule SyncRepos.CLI do
     |> read_yaml()
     |> Git.sync()
     |> display_args()
+    |> Log.output()
     |> response()
     |> IO.puts()
   end
@@ -30,6 +28,7 @@ defmodule SyncRepos.CLI do
     opts
     |> Enum.into(%{})
     |> Map.merge(@default_args)
+    |> Map.put_new(:timestamp, Timestamp.now())
   end
 
   defp display_args(%{debug: true} = args) do
@@ -40,7 +39,7 @@ defmodule SyncRepos.CLI do
   defp display_args(args), do: args
 
   defp read_yaml(args) do
-    filename = Path.expand("~/.sync_repos")
+    filename = Path.expand("#{args[:sync_dir]}/config")
     {:ok, yaml} = YamlElixir.read_from_file(filename)
 
     git_dirs =
