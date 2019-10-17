@@ -3,7 +3,7 @@ defmodule SyncRepos.CLI do
 
   @default_args %{
     halt: false,
-    to_process: ["/Users/jameslavin/.calcurse"],
+    to_process: ["/Users/jameslavin/.calcurse", "/Users/jameslavin/Git/sync_repos"],
     processing: nil,
     processed: []
   }

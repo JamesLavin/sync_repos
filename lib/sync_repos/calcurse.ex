@@ -3,6 +3,8 @@ defmodule SyncRepos.Calcurse do
 
   def sync(%{halt: true} = args), do: args
 
+  def sync(%{to_process: []} = args), do: args
+
   def sync(%{to_process: [dir | more_dirs]} = args) do
     IO.inspect("*** syncing #{dir} ***")
 
@@ -21,7 +23,7 @@ defmodule SyncRepos.Calcurse do
       |> Map.put(:processing, nil)
 
     IO.inspect("*** finished syncing #{dir} ***")
-    new_args
+    sync(new_args)
   end
 
   defp cd_to_calcurse_dir(args) do
