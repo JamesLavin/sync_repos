@@ -40,9 +40,14 @@ defmodule SyncRepos.CLI do
   defp display_args(args), do: args
 
   defp read_yaml(args) do
-    filename = "/Users/jameslavin/.sync_repos"
+    filename = Path.expand("~/.sync_repos")
     {:ok, yaml} = YamlElixir.read_from_file(filename)
-    %{args | to_process: yaml["git"]}
+
+    git_dirs =
+      yaml["git"]
+      |> Enum.map(&Path.expand/1)
+
+    %{args | to_process: git_dirs}
   end
 
   defp response(%{halt: true}) do
