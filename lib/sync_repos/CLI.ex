@@ -1,5 +1,5 @@
 defmodule SyncRepos.CLI do
-  alias SyncRepos.{Git, Timestamp}
+  alias SyncRepos.{Display, Git, Timestamp}
 
   @default_args %{
     sync_dir: "~/.sync_repos",
@@ -36,7 +36,13 @@ defmodule SyncRepos.CLI do
     |> IO.inspect()
   end
 
-  defp display_args(args), do: args
+  defp display_args(args) do
+    args
+    |> Display.simplified()
+    |> IO.inspect()
+
+    args
+  end
 
   defp read_yaml(args) do
     filename = Path.expand("#{args[:sync_dir]}/config")

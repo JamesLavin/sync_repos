@@ -4,12 +4,12 @@ defmodule SyncRepos.Git do
   def sync(%{to_process: []} = args), do: args
 
   def sync(%{to_process: [dir | more_dirs]} = args) do
-    IO.inspect("*** syncing #{dir} ***")
+    IO.puts("----- syncing #{dir} -----")
 
     new_args =
       args
       |> Map.put(:to_process, more_dirs)
-      |> Map.put(:processing, %{dir: dir})
+      |> Map.put(:processing, %{dir: dir, halt: false})
       |> cd_to_git_dir()
       # |> ls_files()
       |> git_status()
@@ -19,19 +19,20 @@ defmodule SyncRepos.Git do
       |> Map.put(:processed, [new_args[:processing] | new_args[:processed]])
       |> Map.put(:processing, nil)
 
-    IO.inspect("*** finished syncing #{dir} ***")
+    IO.puts("----- finished syncing #{dir} -----")
+    IO.puts("")
     sync(new_args)
   end
 
   defp cd_to_git_dir(args) do
     :ok = File.cd(args[:processing][:dir])
-    # File.cwd() |> IO.inspect()
+    # File.cwd() |> IO.puts()
     args
   end
 
   defp ls_files(args) do
     {:ok, files} = File.ls()
-    files |> IO.inspect()
+    files |> IO.puts()
     args
   end
 
@@ -47,15 +48,18 @@ defmodule SyncRepos.Git do
     |> push_if_ahead_of_master()
   end
 
-  defp fail_if_unstaged_changes(%{halt: true} = args), do: args
+  defp fail_if_unstaged_changes(%{processing: %{halt: true}} = args), do: args
 
   defp fail_if_unstaged_changes(%{processing: %{status: status_string}} = args)
        when is_binary(status_string) do
     new_args =
       case Regex.match?(~r/Changes not staged for commit:/, status_string) do
         true ->
-          IO.inspect("FAILURE: Cannot sync because Git repo has unstaged changes")
-          %{args | halt: true}
+          msg = "*** FAILURE: Cannot sync because Git repo has unstaged changes ***"
+          IO.puts(msg)
+
+          put_in(args, [:processing, :halt], true)
+          |> put_in([:processing, :halt_reason], msg)
 
         false ->
           args
@@ -64,16 +68,18 @@ defmodule SyncRepos.Git do
     new_args
   end
 
-  defp fail_if_uncommitted_changes(%{halt: true} = args), do: args
+  defp fail_if_uncommitted_changes(%{processing: %{halt: true}} = args), do: args
 
   defp fail_if_uncommitted_changes(%{processing: %{status: status_string}} = args)
        when is_binary(status_string) do
     new_args =
       case Regex.match?(~r/Changes to be committed:/, status_string) do
         true ->
-          IO.inspect("FAILURE: Cannot sync because Git repo has staged, uncommitted changes")
+          msg = "*** FAILURE: Cannot sync because Git repo has staged, uncommitted changes ***"
+          IO.puts(msg)
 
-          %{args | halt: true}
+          put_in(args, [:processing, :halt], true)
+          |> put_in([:processing, :halt_reason], msg)
 
         false ->
           args
@@ -82,29 +88,29 @@ defmodule SyncRepos.Git do
     new_args
   end
 
-  defp push_if_ahead_of_master(%{halt: true} = args), do: args
+  defp push_if_ahead_of_master(%{processing: %{halt: true}} = args), do: args
 
   defp push_if_ahead_of_master(%{processing: %{status: status_string}} = args)
        when is_binary(status_string) do
     case Regex.match?(~r/Your branch is ahead of 'origin\/master'/, status_string) do
       true ->
-        IO.inspect("*** Pushing changes to remote repo ***")
+        IO.puts("  *** Pushing changes to remote repo ***")
         push_changes(args)
 
       false ->
-        IO.inspect("No need to push changes")
+        # IO.puts("No need to push changes")
         args
     end
   end
 
-  defp push_changes(%{halt: true} = args), do: args
+  defp push_changes(%{processing: %{halt: true}} = args), do: args
 
   defp push_changes(args) do
     System.cmd("git", ["push", "origin", "master"])
     put_in(args, [:processing, :changes_pushed], true)
   end
 
-  defp pull_and_rebase_changes(%{halt: true} = args), do: args
+  defp pull_and_rebase_changes(%{processing: %{halt: true}} = args), do: args
 
   defp pull_and_rebase_changes(%{processing: %{status: status_string}} = args)
        when is_binary(status_string) do
@@ -118,51 +124,61 @@ defmodule SyncRepos.Git do
     handle_pull_and_rebase_changes_output(new_args, exit_code)
   end
 
-  defp handle_pull_and_rebase_changes_output(%{halt: true} = args, _exit_code), do: args
+  defp handle_pull_and_rebase_changes_output(%{processing: %{halt: true}} = args, _exit_code),
+    do: args
 
   defp handle_pull_and_rebase_changes_output(args, 0) do
     output = args[:processing][:pull_rebase_output]
 
     cond do
-      Regex.match?(~r/Updating.*Fast-forward/, output) ->
-        IO.inspect("Successfully pulled new changes from master")
-        args
+      # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
+      Regex.match?(~r/Updating.*Fast-forward/s, output) ->
+        IO.puts("Successfully pulled new changes from master")
+        put_in(args, [:processing, :changes_pulled], true)
 
       Regex.match?(~r/Already up to date/, output) ->
-        IO.inspect("No new changes on master")
-        args
+        msg = "No new changes on master"
+        put_in(args, [:processing, :info], msg)
 
       Regex.match?(~r/Current branch master is up to date/, output) ->
-        IO.inspect("No new changes on master")
-        args
+        msg = "No new changes on master"
+        put_in(args, [:processing, :info], msg)
 
       true ->
-        IO.inspect("*** WARNING: Something unexpected happened: #{output} ***")
-        %{args | halt: true}
+        msg = "*** WARNING: Something unexpected happened: #{output} ***"
+        IO.puts(msg)
+
+        put_in(args, [:processing, :halt], true)
+        |> put_in([:processing, :halt_reason], msg)
     end
   end
 
   defp handle_pull_and_rebase_changes_output(args, _failure_exit_code) do
     output = args[:processing][:pull_rebase_output]
 
-    cond do
-      # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
-      Regex.match?(~r/Auto-merging.*CONFLICT/s, output) ->
-        IO.inspect(
-          "*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict"
-        )
+    new_args =
+      cond do
+        # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
+        Regex.match?(~r/Auto-merging.*CONFLICT/s, output) ->
+          msg =
+            "*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict"
 
-      true ->
-        IO.inspect("*** WARNING: Something unexpected happened: #{output} ***")
-    end
+          IO.puts(msg)
+          put_in(args, [:processing, :halt_reason], msg)
 
-    %{args | halt: true}
+        true ->
+          msg = "*** WARNING: Something unexpected happened: #{output} ***"
+          IO.puts(msg)
+          put_in(args, [:processing, :halt_reason], msg)
+      end
+
+    put_in(new_args, [:processing, :halt], true)
   end
 
   # defp pull_if_behind_master(status_string) when is_binary(status_string) do
   #   case Regex.match?(~r/Your branch is ahead of 'origin\/master'/, status_string) do
-  #     true -> IO.inspect("Pushing changes"); push_changes()
-  #     false -> IO.inspect("No need to push changes")
+  #     true -> IO.puts("Pushing changes"); push_changes()
+  #     false -> IO.puts("No need to push changes")
   #   end
   #   status_string
   # end
