@@ -10,10 +10,12 @@ Keep all your local `Git` repos in sync with their remote counterparts by runnin
 
 ## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
-Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`? `SyncRepos` addresses three time sucks that cumulatively waste a ton of my time:
+Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`? `SyncRepos` addresses three time sucks that cumulatively waste a ton of my time, given how extensively I use Git:
   1) Time wasted manually pulling changes from remote Git repos;
   2) Time wasted looking at out-of-date local caches of remote repos; and,
-  3) Time wasted reconciling merge conflicts that wouldn't have happened if I had kept my local Git repos in sync with their remote counterparts because I added my commits to a stale branch.
+  3) Time wasted reconciling merge conflicts I could have avoided had I kept my local Git repos in sync with their remote counterparts rather than adding new commits to a stale branch.
+
+Keeping my Git repos in sync is especially challenging because I develop on three different machines.
 
 I imagine other devs also waste tons of time keeping their Git repos in sync, so this will hopefully benefit you too.
 
@@ -141,7 +143,11 @@ To github.com:JamesLavin/tech_management.git
 
 ## Installation
 
-1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html). You *don't* need Elixir (a language built on top of Erlang), but [installing Elixir](https://elixir-lang.org/install.html) may be easier -- maybe as easy as `brew install elixir` -- than installing Erlang/OTP. Besides, Elixir is a cool language that you should play around with, so why not just install it?!?!
+*NOTE*: `SyncRepos` currently runs only as an Erlang `escript`. It's apparently possible to package `escript`s with the Erlang Runtime System (ERTS) into platform-specific executable binaries. If you would like me to do so, please email me at "#{my_first_name}@#{my_first_name}#{my_last_name}.com".
+
+1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. You *don't* need Elixir (a language built on top of Erlang), but [installing Elixir](https://elixir-lang.org/install.html) may be easier -- as easy as `brew install elixir`, if you're on a Mac -- than installing Erlang/OTP. Besides, Elixir is a cool language that you should play around with, so why not just install it?!?!
+
+* [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html). 
 
 2) Install the executable by running `mix escript.install github jameslavin/sync_repos` (or an equivalent command, see: [Escript.Install instructions](https://hexdocs.pm/mix/Mix.Tasks.Escript.Install.html)).
 
