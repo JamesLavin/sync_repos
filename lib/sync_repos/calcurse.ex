@@ -8,7 +8,7 @@ defmodule SyncRepos.Calcurse do
       args
       |> Map.merge(%{calcurse_dir: @calcurse_dir})
       |> cd_to_calcurse_dir()
-      |> ls_files()
+      # |> ls_files()
       |> git_status()
 
     IO.inspect("*** finished syncing Calcurse ***")
@@ -17,7 +17,7 @@ defmodule SyncRepos.Calcurse do
 
   defp cd_to_calcurse_dir(args) do
     :ok = File.cd(args[:calcurse_dir])
-    File.cwd() |> IO.inspect()
+    # File.cwd() |> IO.inspect()
     args
   end
 
@@ -29,7 +29,7 @@ defmodule SyncRepos.Calcurse do
 
   defp git_status(args) do
     {status_string, 0} = System.cmd("git", ["status"])
-    status_string |> IO.inspect(label: "status_string")
+    # status_string |> IO.inspect(label: "status_string")
 
     args
     |> Map.merge(%{status: status_string})
@@ -49,7 +49,6 @@ defmodule SyncRepos.Calcurse do
           %{args | halt: true}
 
         false ->
-          IO.inspect("We're good")
           args
       end
 
@@ -70,7 +69,6 @@ defmodule SyncRepos.Calcurse do
           %{args | halt: true}
 
         false ->
-          IO.inspect("We're good")
           args
       end
 
@@ -82,21 +80,20 @@ defmodule SyncRepos.Calcurse do
   defp push_if_ahead_of_master(%{status: status_string} = args) when is_binary(status_string) do
     case Regex.match?(~r/Your branch is ahead of 'origin\/master'/, status_string) do
       true ->
-        IO.inspect("Pushing changes")
+        IO.inspect("*** Pushing changes to remote repo ***")
         push_changes(args)
 
       false ->
         IO.inspect("No need to push changes")
+        args
     end
-
-    args
   end
 
   defp push_changes(%{halt: true} = args), do: args
 
   defp push_changes(args) do
     System.cmd("git", ["push", "origin", "master"])
-    args
+    %{args | changes_pushed: true}
   end
 
   defp pull_and_rebase_changes(%{halt: true} = args), do: args
@@ -120,6 +117,10 @@ defmodule SyncRepos.Calcurse do
         args
 
       Regex.match?(~r/Already up to date/, args[:pull_rebase_output]) ->
+        IO.inspect("No new changes on master")
+        args
+
+      Regex.match?(~r/Current branch master is up to date/, args[:pull_rebase_output]) ->
         IO.inspect("No new changes on master")
         args
 
