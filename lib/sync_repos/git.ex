@@ -158,6 +158,10 @@ defmodule SyncRepos.Git do
         IO.puts("Successfully pulled new changes from master")
         put_in(token, [:processing, :changes_pulled], true)
 
+      Regex.match?(~r/Fast-forwarded master to/s, output) ->
+        IO.puts("Successfully pulled new changes from master")
+        put_in(token, [:processing, :changes_pulled], true)
+
       Regex.match?(~r/Already up to date/, output) ->
         msg = "No new changes on master"
         put_in(token, [:processing, :info], msg)
