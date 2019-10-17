@@ -1,23 +1,27 @@
 # SyncRepos
 
-Keep all your local `Git` repos in sync with their remote `Git` repos by running a single command (which you can run periodically in a `cron` job if you want).
+Keep all your local `Git` repos in sync with their remote counterparts by running a single command (which you can run periodically in a `cron` job if you want).
 
-`SyncRepos` will attempt to pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo.
+`SyncRepos` will pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo.
 
-`SyncRepos` won't try to sync a repo if the local copy of that repo contains any unstaged changes in tracked files.
+`SyncRepos` won't try to sync a repo if the local repo contains any unstaged changes in tracked files.
+
+`SyncRepos` provides command-line information and records richer debugging information in a timestamped log file each time it runs.
+
+## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
 Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`? `SyncRepos` addresses three time sucks that cumulatively waste a ton of my time:
   1) Time wasted manually pulling changes from remote Git repos;
   2) Time wasted looking at out-of-date local caches of remote repos; and,
   3) Time wasted reconciling merge conflicts that wouldn't have happened if I had kept my local Git repos in sync with their remote counterparts because I added my commits to a stale branch.
 
+I imagine other devs also waste tons of time keeping their Git repos in sync, so this will hopefully benefit you too.
+
 **WARNING**: Use at your own risk! I'm currently using this on my Git repos (on my Mac & Linux laptops... I have no idea about Windows), so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
 
 This script may require modification to work with different versions of Git. If you encounter a problem, please open an `Issue` in `https://github.com/JamesLavin/sync_repos/issues` and paste in the problematic log output, then I will try to update this script.
 
 ## Usage
-
-**NOTE**: `SyncRepos` currently skips any Git repo with a checked-out branch other than `master`. If the checked-out branch of any repo you added to `~/.sync_repos/config` isn't `master`, `SyncRepos` should skip that repo. (I hope to generalize this tool to work with non-`master` branches.)
 
 To use the `SyncRepos` escript:
 
@@ -131,11 +135,13 @@ To github.com:JamesLavin/tech_management.git
 
 5) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
 
-NOTE: `SyncRepos` attempts to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
+*NOTE*: `SyncRepos` currently skips any Git repo with a checked-out branch other than `master`. If the checked-out branch of any repo you added to `~/.sync_repos/config` isn't `master`, `SyncRepos` should skip that repo. (I hope to generalize this tool to work with non-`master` branches.)
+
+*NOTE*: `SyncRepos` attempts to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
 
 ## Installation
 
-1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html)
+1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html). You *don't* need Elixir (a language built on top of Erlang), but [installing Elixir](https://elixir-lang.org/install.html) may be easier -- maybe as easy as `brew install elixir` -- than installing Erlang/OTP. Besides, Elixir is a cool language that you should play around with, so why not just install it?!?!
 
 2) Install the executable by running `mix escript.install github jameslavin/sync_repos` (or an equivalent command, see: [Escript.Install instructions](https://hexdocs.pm/mix/Mix.Tasks.Escript.Install.html)).
 
