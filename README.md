@@ -11,7 +11,9 @@ Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`
   2) Time wasted looking at out-of-date local caches of remote repos; and,
   3) Time wasted reconciling merge conflicts that wouldn't have happened if I had kept my local Git repos in sync with their remote counterparts because I added my commits to a stale branch.
 
-**WARNING**: Use at your own risk! I'm currently using this on my Git repos, so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
+**WARNING**: Use at your own risk! I'm currently using this on my Git repos (on my Mac & Linux laptops... I have no idea about Windows), so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
+
+This script may require modification to work with different versions of Git. If you encounter a problem, please open an `Issue` in `https://github.com/JamesLavin/sync_repos/issues` and paste in the problematic log output, then I will try to update this script.
 
 ## Usage
 
@@ -133,9 +135,7 @@ To github.com:JamesLavin/tech_management.git
 
 6) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
 
-NOTE: The current behavior is to attempt to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
-
-NOTE: This should work on Linux & Mac machines. I have no idea about Windows.
+NOTE: `SyncRepos` attempts to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
 
 ## Installation
 
