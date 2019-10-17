@@ -123,7 +123,7 @@ To github.com:JamesLavin/tech_management.git
 
 7) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
 
-NOTE: The current behavior is to halt on the first failure, but I intend to change the default behavior to attempt to sync each repo, regardless of what happens while attempting to sync other repos.
+NOTE: The current behavior is to attempt to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
 
 NOTE: This should work on Linux & Mac machines. I have no idea about Windows.
 
