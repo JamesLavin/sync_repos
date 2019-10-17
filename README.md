@@ -6,17 +6,21 @@ Keep all your local `Git` repos in sync with remote `Git` repos by running a sin
 
 `SyncRepos` will halt trying to sync a repo if the local copy of that repo contains any unstaged changes in tracked files.
 
-**WARNING** Use at your own risk! I'm currently using this on my Git repos, so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
+**WARNING**: Use at your own risk! I'm currently using this on my Git repos, so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
 
 ## Usage
 
 **NOTE**: `SyncRepos` currently skips any Git repo with a checked-out branch other than `master`. If the checked-out branch of any repo you added to `~/.sync_repos/config` isn't `master`, `SyncRepos` should skip that repo. (I hope to generalize this tool to work with non-`master` branches.)
 
-1) Pull down the executable, [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) (or generate it by pulling down this repo and running `mix escript.build` in this directory... for which you'll need `Elixir` and `Mix` installed)
+To use `SyncRepos`:
+
+1) To run an `escript`, you must have Erlang/OTP installed on your machine. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html)
+
+1) Pull down the executable, [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) (or build and install it by pulling down this repo and running `mix do escript.build, escript.install` in this directory... for which you'll need `Elixir` and `Mix` installed)
 
 2) Make sure the binary file is executable (`chmod u+x sync_repos`)
 
-3) Put the executable somewhere on your `$PATH` (or else you'll need to execute it directly -- as `./sync_repos` -- from within the same directory)
+3) Put the executable somewhere on your `$PATH` (or else you'll need to execute it directly -- as `./sync_repos` -- from within the same directory) OR install it via `mix` with `mix escript.install sync_repos` so you can invoke it from anywhere
 
 4) Create a `~/.sync_repos` directory.
 
