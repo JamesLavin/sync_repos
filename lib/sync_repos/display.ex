@@ -1,10 +1,10 @@
 defmodule SyncRepos.Display do
-  def simplified(args) do
+  def simplified(token) do
     simplified =
-      args[:processed]
+      token[:processed]
       |> Enum.map(&keep_desired_fields/1)
 
-    put_in(args, [:processed], simplified)
+    put_in(token, [:processed], simplified)
   end
 
   defp keep_desired_fields(repo) do

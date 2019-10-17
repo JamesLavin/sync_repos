@@ -162,6 +162,7 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 * Upload to Hex
 * Add option to use non-standard file location
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
+* Add strategies for syncing other resources besides Git repos
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
 * Option to suppress saving all log files and instead save only the latest log file (or the last N log files?)
