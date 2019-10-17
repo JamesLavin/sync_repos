@@ -1,5 +1,4 @@
 defmodule SyncRepos.CLI do
-
   alias SyncRepos.Calcurse
 
   def main(args \\ []) do
@@ -12,13 +11,14 @@ defmodule SyncRepos.CLI do
   end
 
   defp parse_args(args) do
-    # NOTE: not using this yet but probably will
-    IO.inspect(args)
-    {_opts, _word, _} =
+    {opts, _word, _} =
       args
-      |> OptionParser.parse()
+      |> OptionParser.parse(switches: [debug: :boolean])
+      |> IO.inspect()
 
-    %{halt: false}
+    opts
+    |> Enum.into(%{})
+    |> Map.merge(%{halt: false})
   end
 
   defp display_args(%{debug: true} = args) do

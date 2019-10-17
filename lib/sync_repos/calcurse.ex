@@ -1,14 +1,15 @@
 defmodule SyncRepos.Calcurse do
-
   @calcurse_dir "/Users/jameslavin/.calcurse"
 
   def sync(args) do
     IO.inspect("*** syncing Calcurse ***")
-    new_args = args
-            |> Map.merge(%{calcurse_dir: @calcurse_dir})
-            |> cd_to_calcurse_dir()
-            |> ls_files()
-            |> git_status()
+
+    new_args =
+      args
+      |> Map.merge(%{calcurse_dir: @calcurse_dir})
+      |> cd_to_calcurse_dir()
+      |> ls_files()
+      |> git_status()
 
     IO.inspect("*** finished syncing Calcurse ***")
     new_args
@@ -29,6 +30,7 @@ defmodule SyncRepos.Calcurse do
   defp git_status(args) do
     {status_string, 0} = System.cmd("git", ["status"])
     status_string |> IO.inspect(label: "status_string")
+
     args
     |> Map.merge(%{status: status_string})
     |> fail_if_unstaged_changes()
@@ -40,20 +42,38 @@ defmodule SyncRepos.Calcurse do
   defp fail_if_unstaged_changes(%{halt: true} = args), do: args
 
   defp fail_if_unstaged_changes(%{status: status_string} = args) when is_binary(status_string) do
-    new_args = case Regex.match?(~r/Changes not staged for commit:/, status_string) do
-      true -> IO.inspect("FAILURE: Cannot sync because Calcurse has unstaged changes in Git"); %{args | halt: true}
-      false -> IO.inspect("We're good"); args
-    end
+    new_args =
+      case Regex.match?(~r/Changes not staged for commit:/, status_string) do
+        true ->
+          IO.inspect("FAILURE: Cannot sync because Calcurse has unstaged changes in Git")
+          %{args | halt: true}
+
+        false ->
+          IO.inspect("We're good")
+          args
+      end
+
     new_args
   end
 
   defp fail_if_uncommitted_changes(%{halt: true} = args), do: args
 
-  defp fail_if_uncommitted_changes(%{status: status_string} = args) when is_binary(status_string) do
-    new_args = case Regex.match?(~r/Changes to be committed:/, status_string) do
-      true -> IO.inspect("FAILURE: Cannot sync because Calcurse has staged, uncommitted changes in Git"); %{args | halt: true}
-      false -> IO.inspect("We're good"); args
-    end
+  defp fail_if_uncommitted_changes(%{status: status_string} = args)
+       when is_binary(status_string) do
+    new_args =
+      case Regex.match?(~r/Changes to be committed:/, status_string) do
+        true ->
+          IO.inspect(
+            "FAILURE: Cannot sync because Calcurse has staged, uncommitted changes in Git"
+          )
+
+          %{args | halt: true}
+
+        false ->
+          IO.inspect("We're good")
+          args
+      end
+
     new_args
   end
 
@@ -64,9 +84,11 @@ defmodule SyncRepos.Calcurse do
       true ->
         IO.inspect("Pushing changes")
         push_changes(args)
+
       false ->
         IO.inspect("No need to push changes")
     end
+
     args
   end
 
@@ -81,8 +103,11 @@ defmodule SyncRepos.Calcurse do
 
   defp pull_and_rebase_changes(%{status: status_string} = args) when is_binary(status_string) do
     {pull_rebase_output, exit_code} = System.cmd("git", ["pull", "--rebase", "origin", "master"])
-    new_args = Map.put(args, :pull_rebase_output, pull_rebase_output)
-                |> Map.put(:pull_rebase_exit_code, exit_code)
+
+    new_args =
+      Map.put(args, :pull_rebase_output, pull_rebase_output)
+      |> Map.put(:pull_rebase_exit_code, exit_code)
+
     handle_pull_and_rebase_changes_output(new_args, exit_code)
   end
 
@@ -93,9 +118,11 @@ defmodule SyncRepos.Calcurse do
       Regex.match?(~r/Updating.*Fast-forward/, args[:pull_rebase_output]) ->
         IO.inspect("Successfully pulled new changes from master")
         args
+
       Regex.match?(~r/Already up to date/, args[:pull_rebase_output]) ->
         IO.inspect("No new changes on master")
         args
+
       true ->
         IO.inspect("*** WARNING: Something unexpected happened: #{args[:pull_rebase_output]} ***")
         %{args | halt: true}
@@ -106,10 +133,14 @@ defmodule SyncRepos.Calcurse do
     cond do
       # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
       Regex.match?(~r/Auto-merging.*CONFLICT/s, args[:pull_rebase_output]) ->
-        IO.inspect("*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict")
+        IO.inspect(
+          "*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict"
+        )
+
       true ->
         IO.inspect("*** WARNING: Something unexpected happened: #{args[:pull_rebase_output]} ***")
     end
+
     %{args | halt: true}
   end
 
@@ -120,5 +151,4 @@ defmodule SyncRepos.Calcurse do
   #   end
   #   status_string
   # end
-
 end
