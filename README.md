@@ -15,6 +15,10 @@ Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`
   2) Time wasted looking at out-of-date local caches of remote repos; and,
   3) Time wasted reconciling merge conflicts I could have avoided had I kept my local Git repos in sync with their remote counterparts rather than adding new commits to a stale branch.
 
+As the great cartoon [`xkcd`](https://xkcd.com/1205/) put it:
+
+![how_long_can_you_work_on_making_routine_task_efficient](https://imgs.xkcd.com/comics/is_it_worth_the_time.png)
+
 Keeping my Git repos in sync is especially challenging because I develop on three different machines.
 
 I imagine other devs also waste tons of time keeping their Git repos in sync, so this will hopefully benefit you too.
