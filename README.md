@@ -6,6 +6,8 @@ Keep all your local `Git` repos in sync with remote `Git` repos by running a sin
 
 `SyncRepos` will halt trying to sync a repo if the local copy of that repo contains any unstaged changes in tracked files.
 
+**WARNING** Use at your own risk! I'm currently using this on my Git repos, so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
+
 ## Usage
 
 **NOTE**: `SyncRepos` currently skips any Git repo with a checked-out branch other than `master`. If the checked-out branch of any repo you added to `~/.sync_repos/config` isn't `master`, `SyncRepos` should skip that repo. (I hope to generalize this tool to work with non-`master` branches.)
