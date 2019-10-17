@@ -1,10 +1,15 @@
 # SyncRepos
 
-Keep all your local `Git` repos in sync with remote `Git` repos by running a single command (which you can run periodically in a `cron` job if you want).
+Keep all your local `Git` repos in sync with their remote `Git` repos by running a single command (which you can run periodically in a `cron` job if you want).
 
 `SyncRepos` will attempt to pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo.
 
-`SyncRepos` will halt trying to sync a repo if the local copy of that repo contains any unstaged changes in tracked files.
+`SyncRepos` won't try to sync a repo if the local copy of that repo contains any unstaged changes in tracked files.
+
+Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`? `SyncRepos` addresses three time sucks that cumulatively waste a ton of my time:
+  1) Time wasted manually pulling changes from remote Git repos;
+  2) Time wasted looking at out-of-date local caches of remote repos; and,
+  3) Time wasted reconciling merge conflicts that wouldn't have happened if I had kept my local Git repos in sync with their remote counterparts because I added my commits to a stale branch.
 
 **WARNING**: Use at your own risk! I'm currently using this on my Git repos, so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
 
