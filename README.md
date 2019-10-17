@@ -137,7 +137,9 @@ NOTE: `SyncRepos` attempts to sync every repo, regardless of what happens while 
 
 1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html)
 
-2) Install the executable by running `mix escript.install github jameslavin/sync_repos`. After doing so, you should be able to run the script with just `~/.mix/escripts/sync_repos`... but I currently have a misbehaving [asdf](https://github.com/asdf-vm/asdf) install and must invoke this as `~/.asdf/installs/elixir/1.9.1-otp-22/.mix/escripts/sync_repos`.
+2) Install the executable by running `mix escript.install github jameslavin/sync_repos` (or an equivalent command, see: [Escript.Install instructions](https://hexdocs.pm/mix/Mix.Tasks.Escript.Install.html)).
+
+3) You should now be able to run the script with just `~/.mix/escripts/sync_repos`... but I currently have a misbehaving [asdf](https://github.com/asdf-vm/asdf) install and must invoke this as `~/.asdf/installs/elixir/1.9.1-otp-22/.mix/escripts/sync_repos`. YMMV.
 
 Alternatively, you could pull down the executable from [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) OR build and install it by pulling down this repo and running `mix do escript.build, escript.install` in this directory... for which you'll need `Elixir` and `Mix` installed). You could then put the executable somewhere on your `$PATH` (or else execute it directly -- as `./sync_repos` -- from within the same directory) OR install it via `mix` with `mix escript.install sync_repos`
 
