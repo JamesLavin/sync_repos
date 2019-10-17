@@ -1,9 +1,13 @@
 defmodule SyncRepos.CLI do
-  alias SyncRepos.Calcurse
+  alias SyncRepos.Git
 
   @default_args %{
     halt: false,
-    to_process: ["/Users/jameslavin/.calcurse", "/Users/jameslavin/Git/sync_repos"],
+    to_process: [
+      #  "/Users/jameslavin/Git/elixir",
+      #  "/Users/jameslavin/.calcurse",
+      #  "/Users/jameslavin/Git/sync_repos"
+    ],
     processing: nil,
     processed: []
   }
@@ -11,7 +15,8 @@ defmodule SyncRepos.CLI do
   def main(args \\ []) do
     args
     |> parse_args
-    |> Calcurse.sync()
+    |> read_yaml()
+    |> Git.sync()
     |> display_args()
     |> response()
     |> IO.puts()
@@ -33,6 +38,12 @@ defmodule SyncRepos.CLI do
   end
 
   defp display_args(args), do: args
+
+  defp read_yaml(args) do
+    filename = "/Users/jameslavin/.sync_repos"
+    {:ok, yaml} = YamlElixir.read_from_file(filename)
+    %{args | to_process: yaml["git"]}
+  end
 
   defp response(%{halt: true}) do
     "*** WARNING: Processing did not complete successfully ***"

@@ -1,6 +1,4 @@
-defmodule SyncRepos.Calcurse do
-  # @calcurse_dir "/Users/jameslavin/.calcurse"
-
+defmodule SyncRepos.Git do
   def sync(%{halt: true} = args), do: args
 
   def sync(%{to_process: []} = args), do: args
@@ -12,8 +10,7 @@ defmodule SyncRepos.Calcurse do
       args
       |> Map.put(:to_process, more_dirs)
       |> Map.put(:processing, %{dir: dir})
-      # |> Map.merge(%{calcurse_dir: @calcurse_dir})
-      |> cd_to_calcurse_dir()
+      |> cd_to_git_dir()
       # |> ls_files()
       |> git_status()
 
@@ -26,7 +23,7 @@ defmodule SyncRepos.Calcurse do
     sync(new_args)
   end
 
-  defp cd_to_calcurse_dir(args) do
+  defp cd_to_git_dir(args) do
     :ok = File.cd(args[:processing][:dir])
     # File.cwd() |> IO.inspect()
     args
@@ -57,7 +54,7 @@ defmodule SyncRepos.Calcurse do
     new_args =
       case Regex.match?(~r/Changes not staged for commit:/, status_string) do
         true ->
-          IO.inspect("FAILURE: Cannot sync because Calcurse has unstaged changes in Git")
+          IO.inspect("FAILURE: Cannot sync because Git repo has unstaged changes")
           %{args | halt: true}
 
         false ->
@@ -74,9 +71,7 @@ defmodule SyncRepos.Calcurse do
     new_args =
       case Regex.match?(~r/Changes to be committed:/, status_string) do
         true ->
-          IO.inspect(
-            "FAILURE: Cannot sync because Calcurse has staged, uncommitted changes in Git"
-          )
+          IO.inspect("FAILURE: Cannot sync because Git repo has staged, uncommitted changes")
 
           %{args | halt: true}
 
