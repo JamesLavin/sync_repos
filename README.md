@@ -145,6 +145,8 @@ To github.com:JamesLavin/tech_management.git
 
 *NOTE*: `SyncRepos` currently runs only as an Erlang `escript`. It's apparently possible to package `escript`s with the Erlang Runtime System (ERTS) into platform-specific executable binaries. If you would like me to do so, please email me at "#{my_first_name}@#{my_first_name}#{my_last_name}.com".
 
+Installation steps:
+
 1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. You *don't* need Elixir (a language built on top of Erlang), but [installing Elixir](https://elixir-lang.org/install.html) may be easier -- as easy as `brew install elixir`, if you're on a Mac -- than installing Erlang/OTP. Besides, Elixir is a cool language that you should play around with, so why not just install it?!?!
 
 * [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html). 
