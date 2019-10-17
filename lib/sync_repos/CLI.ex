@@ -1,7 +1,12 @@
 defmodule SyncRepos.CLI do
   alias SyncRepos.Calcurse
 
-  @default_args %{changes_pushed: nil, halt: false}
+  @default_args %{
+    halt: false,
+    to_process: ["/Users/jameslavin/.calcurse"],
+    processing: nil,
+    processed: []
+  }
 
   def main(args \\ []) do
     args
