@@ -133,6 +133,21 @@ To github.com:JamesLavin/tech_management.git
   timestamp: "20191017144242",
   to_process: []
 }
+SyncRepos script completed
+
+Notable repos: [
+  %{
+    changes_pushed: true,
+    dir: "/Users/jameslavin/Git/tech_management"
+  },
+  %{
+    dir: "/Users/jameslavin/Git/sync_repos",
+    halt_reason: "*** FAILURE: Cannot sync because Git repo has unstaged changes ***"
+  },
+  %{dir: "/Users/jameslavin/Git/conduit",
+    halt_reason: "*** FAILURE: Branch 'my_feature' is currently checked out ***"
+  }
+]
 ```
 
 5) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
@@ -167,6 +182,7 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 * Upload to Hex
 * Add option to use non-standard file location
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
+* Enable optional per-repo committing of uncommitted changes
 * Add strategies for syncing other resources besides Git repos
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches

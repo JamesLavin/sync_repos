@@ -1,14 +1,28 @@
 defmodule SyncRepos.Display do
-  def simplified(token) do
+  @major_fields [:dir, :halt_reason, :changes_pulled, :changes_pushed]
+
+  def simplified(%{processed: processed} = token) do
     simplified =
-      token[:processed]
-      |> Enum.map(&keep_desired_fields/1)
+      processed
+      |> Enum.map(&keep_major_fields/1)
 
     put_in(token, [:processed], simplified)
   end
 
-  defp keep_desired_fields(repo) do
-    desired_fields = [:dir, :halt_reason, :changes_pulled, :changes_pushed]
-    Map.take(repo, desired_fields)
+  def set_notable_repos(%{processed: processed} = token) do
+    notable =
+      processed
+      |> Enum.map(&keep_major_fields/1)
+      |> Enum.reject(&map_with_only_dir_key/1)
+
+    put_in(token, [:notable_repos], notable)
+  end
+
+  defp map_with_only_dir_key(map) do
+    map == Map.take(map, [:dir])
+  end
+
+  defp keep_major_fields(repo) do
+    Map.take(repo, @major_fields)
   end
 end

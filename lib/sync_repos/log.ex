@@ -3,6 +3,7 @@ defmodule Log do
     output_dir = Path.expand(token[:sync_dir]) <> "/logs"
     make_log_dir(output_dir)
     save_output(token, output_dir)
+    token
   end
 
   defp save_output(token, output_dir) do

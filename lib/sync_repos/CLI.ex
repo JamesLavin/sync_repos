@@ -7,6 +7,7 @@ defmodule SyncRepos.CLI do
     |> read_yaml()
     |> Git.sync()
     |> display_token()
+    |> Display.set_notable_repos()
     |> Log.output()
     |> response()
     |> IO.puts()
@@ -51,7 +52,7 @@ defmodule SyncRepos.CLI do
     "*** WARNING: Processing did not complete successfully ***"
   end
 
-  defp response(_token) do
-    "*** SUCCESS: Processing completed successfully ***"
+  defp response(%{} = token) do
+    "SyncRepos script completed\n\nNotable repos: #{inspect(token[:notable_repos], pretty: true)}"
   end
 end
