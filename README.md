@@ -19,17 +19,15 @@ Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`
 
 To use `SyncRepos`:
 
-1) To run an `escript`, you must have Erlang/OTP installed on your machine. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html)
+1) To run an `escript`, *you must have Erlang/OTP installed on your machine*. [More on escripts](https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html)
 
-1) Pull down the executable, [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) (or build and install it by pulling down this repo and running `mix do escript.build, escript.install` in this directory... for which you'll need `Elixir` and `Mix` installed)
+2) Install the executable by running `mix escript.install github jameslavin/sync_repos`. After doing so, you should be able to run the script with just `~/.mix/escripts/sync_repos`... but I currently have a misbehaving [asdf](https://github.com/asdf-vm/asdf) install and must invoke this as `~/.asdf/installs/elixir/1.9.1-otp-22/.mix/escripts/sync_repos`.
 
-2) Make sure the binary file is executable (`chmod u+x sync_repos`)
+Alternatively, you could pull down the executable from [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) OR build and install it by pulling down this repo and running `mix do escript.build, escript.install` in this directory... for which you'll need `Elixir` and `Mix` installed). You could then put the executable somewhere on your `$PATH` (or else execute it directly -- as `./sync_repos` -- from within the same directory) OR install it via `mix` with `mix escript.install sync_repos`
 
-3) Put the executable somewhere on your `$PATH` (or else you'll need to execute it directly -- as `./sync_repos` -- from within the same directory) OR install it via `mix` with `mix escript.install sync_repos` so you can invoke it from anywhere
+3) Create a `~/.sync_repos` directory.
 
-4) Create a `~/.sync_repos` directory.
-
-5) Create a `~/.sync_repos/config` YAML file specifying the `Git` directories on your local machine that you wish to keep synched up with remote `Git` repos, like this:
+4) Create a `~/.sync_repos/config` YAML file specifying the `Git` directories on your local machine that you wish to keep synched up with remote `Git` repos, like this:
 
 ```
 git:
@@ -41,7 +39,7 @@ git:
   - ~/Git/sync_repos
 ```
 
-6) Run `sync_repos` to sync all your Git repos. (If you want full debugging output, run `./sync_repos --debug`.) You will see output like the following:
+5) Run `sync_repos` to sync all your Git repos. (If you want full debugging output, run `./sync_repos --debug`.) You will see output like the following:
 
 ```
 Jamess-MacBook-Pro:sync_repos jameslavin$ ./sync_repos
@@ -133,7 +131,7 @@ To github.com:JamesLavin/tech_management.git
 }
 ```
 
-7) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
+6) To view the log file produced by any `SyncRepos` run (which contains additional debugging information not displayed by default), visit `~/.sync_repos/logs/`. Log files are timestamped like `~/.sync_repos/logs/sync_repos_20191017133716`
 
 NOTE: The current behavior is to attempt to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
 
