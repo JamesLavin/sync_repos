@@ -190,7 +190,9 @@ defmodule SyncRepos.Git do
             "*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict"
 
           IO.puts(msg)
+
           put_in(token, [:processing, :halt_reason], msg)
+          |> put_in([:processing, :changes_pulled], true)
 
         true ->
           msg = "*** WARNING: Something unexpected happened: #{output} ***"
