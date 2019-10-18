@@ -1,12 +1,12 @@
 defmodule SyncRepos.Validator do
   def exit_if_invalid_sync_dir(token) do
-    sync_dir = token[:sync_dir]
+    sync_dir = token[:sync_dir] |> Path.expand() |> IO.inspect()
 
-    if !File.dir?(token[:sync_dir]) do
+    if File.dir?(sync_dir) do
+      token
+    else
       display_sync_dir_error_and_terminate(token)
     end
-
-    token
   end
 
   defp display_sync_dir_error_and_terminate(token) do
