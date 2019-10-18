@@ -1,7 +1,20 @@
 defmodule SyncRepos.Display do
   @major_fields [:dir, :halt_reason, :changes_pulled, :changes_pushed]
 
-  def simplified(%{processed: processed} = token) do
+  def token(%{debug: true} = token) do
+    token
+    |> IO.inspect()
+  end
+
+  def token(token) do
+    token
+    |> simplified()
+    |> IO.inspect()
+
+    token
+  end
+
+  defp simplified(%{processed: processed} = token) do
     simplified =
       processed
       |> Enum.map(&keep_major_fields/1)
