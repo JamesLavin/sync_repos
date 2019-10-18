@@ -47,7 +47,7 @@ git:
   - ~/Git/sync_repos
 ```
 
-4) Run `sync_repos` to sync all your Git repos. (If you want full debugging output, run `./sync_repos --debug`.) You will see output like the following:
+4) Run `sync_repos` to sync all your Git repos. You will see output like the following:
 
 ```
 Jamess-MacBook-Pro:sync_repos jameslavin$ ./sync_repos
@@ -160,6 +160,12 @@ Notable repos: [
 
 *NOTE*: `SyncRepos` attempts to sync every repo, regardless of what happens while attempting to sync other repos. I may add an option to halt on any failure.
 
+## Options
+
+* If you wish to use a non-standard directory instead of the default of `~/.sync_repos`, you can indicate this by passing your directory with the `-dir` flag (e.g., `./sync_repos -dir ~/my/sync_repos/dir`) or, equivalently, the `--sync-dir` flag.
+
+* If you want to view full debugging output in your console, run `./sync_repos --debug`. (Whether you use the `--debug` flag or not, full debugging information is recorded after each run in a timestamped file within `./sync_repos/logs`.)
+
 ## Installation
 
 *NOTE*: `SyncRepos` currently runs only as an Erlang `escript`. It's apparently possible to package `escript`s with the Erlang Runtime System (ERTS) into platform-specific executable binaries. If you would like me to do so, please email me at "#{my_first_name}@#{my_first_name}#{my_last_name}.com".
@@ -184,9 +190,10 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
 * Improve documentation
 * Upload to Hex
-* Add option to use non-standard file location
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
 * Enable optional per-repo committing of uncommitted changes
+* Make Token a struct
+* Add tests!
 * Add strategies for syncing other resources besides Git repos
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
