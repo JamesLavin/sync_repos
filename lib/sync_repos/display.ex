@@ -22,6 +22,14 @@ defmodule SyncRepos.Display do
     put_in(token, [:processed], simplified)
   end
 
+  def response(%{halt: true}) do
+    "*** WARNING: Processing did not complete successfully ***"
+  end
+
+  def response(%{} = token) do
+    "SyncRepos script completed\n\nNotable repos: #{inspect(token[:notable_repos], pretty: true)}"
+  end
+
   def set_notable_repos(%{processed: processed} = token) do
     notable =
       processed

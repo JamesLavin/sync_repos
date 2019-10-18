@@ -162,9 +162,9 @@ Notable repos: [
 
 ## Options
 
-* If you wish to use a non-standard directory instead of the default of `~/.sync_repos`, you can indicate this by passing your directory with the `-d` flag (e.g., `./sync_repos -d ~/my/sync_repos/dir`) or, equivalently, the `--sync-dir` flag.
+* To use a non-standard directory instead of the default of `~/.sync_repos`, you can indicate this by passing your directory with the `-d` flag (e.g., `./sync_repos -d ~/my/sync_repos/dir`) or, equivalently, the `--sync-dir` flag.
 
-* If you want to view full debugging output in your console, run `./sync_repos --debug`. (Whether you use the `--debug` flag or not, full debugging information is recorded after each run in a timestamped file within `./sync_repos/logs`.)
+* To view full debugging output in your console, run `./sync_repos --debug`. (Whether you use the `--debug` flag or not, full debugging information is recorded after each run in a timestamped file within `./sync_repos/logs`.)
 
 ## Installation
 
