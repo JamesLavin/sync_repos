@@ -188,6 +188,7 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
 ## IDEAS FOR FUTURE
 
+* Enable adding Github repo by providing "user/repo" and a default local Git dir
 * Improve documentation
 * Upload to Hex
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
