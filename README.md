@@ -191,6 +191,7 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 * Enable adding Github repo by providing "user/repo" and a default local Git dir
 * Improve documentation
 * Upload to Hex
+* User-enabled, per-repo notifications when new commits are pulled
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
 * Enable optional per-repo committing of uncommitted changes
 * Make Token a struct
