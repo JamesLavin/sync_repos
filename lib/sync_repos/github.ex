@@ -21,7 +21,6 @@ defmodule SyncRepos.Github do
         put_in(token, [:processing, :dir], Path.join(git_dir, repo))
 
       true ->
-        IO.inspect("didn't match dir '#{dir}'")
         token
     end
   end
