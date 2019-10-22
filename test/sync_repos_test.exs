@@ -31,9 +31,6 @@ defmodule SyncReposTest do
 
     assert output =~
              "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '[\"Joe/Smith/Bob\", \"wyle_e_coyote\"]' **"
-
-    assert output =~ "sync_dir: \"./test/support/invalid_git_dirs\""
-    assert output =~ "invalid_dirs: [\"Joe/Smith/Bob\", \"wyle_e_coyote\"]"
   end
 
   test "invalid sync_dir" do

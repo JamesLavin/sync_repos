@@ -1,6 +1,6 @@
 defmodule SyncRepos.Github do
   def is_valid_github?(git_path) do
-    regex = ~r/^[[:alnum:]]+\/[[:alnum:]]+$/
+    regex = ~r/^[[:alnum:]_-]+\/[[:alnum:]_-]+$/
     String.match?(git_path, regex)
   end
 
