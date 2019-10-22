@@ -5,7 +5,7 @@ defmodule SyncRepos.CommandLineParser do
     {parsed_switches, _other_args, _errors} =
       args
       |> OptionParser.parse(
-        aliases: [dir: :sync_dir],
+        aliases: [d: :sync_dir],
         strict: [sync_dir: :string, debug: :boolean]
       )
 

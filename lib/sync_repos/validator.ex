@@ -9,6 +9,32 @@ defmodule SyncRepos.Validator do
     end
   end
 
+  def exit_if_invalid_default_git_dir(%{default_git_dir: nil} = token), do: token
+
+  def exit_if_invalid_default_git_dir(%{default_git_dir: default_git_dir} = token) do
+    dgd = default_git_dir |> Path.expand()
+
+    case File.dir?(dgd) do
+      true -> %{token | default_git_dir: dgd}
+      false -> display_default_git_dir_error_and_terminate(token)
+    end
+  end
+
+  defp display_default_git_dir_error_and_terminate(token) do
+    IO.inspect(token)
+    IO.puts("")
+
+    IO.puts(
+      "*** ERROR: SyncRepos terminated because the config file specifies an invalid :default_git_dir, '#{
+        token[:default_git_dir]
+      }' ***"
+    )
+
+    # NOTE: I want to use System.halt(0) but don't know how to test it
+    exit(:normal)
+    # System.halt(0)
+  end
+
   defp display_sync_dir_error_and_terminate(token) do
     IO.puts("")
 
@@ -26,6 +52,8 @@ defmodule SyncRepos.Validator do
       "You can also specify an alternative directory by calling '~/.sync_repos -d ~/my_sync_dir'"
     )
 
-    System.halt(0)
+    # NOTE: I want to use System.halt(0) but don't know how to test it
+    exit(:normal)
+    # System.halt(0)
   end
 end
