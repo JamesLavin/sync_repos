@@ -1,4 +1,4 @@
 default_git_dir: ./test/support/git_dir
 
 git:
-  - JamesLavin/HtmlsToPdf
+  - ./test/support/git_dir/HtmlsToPdf

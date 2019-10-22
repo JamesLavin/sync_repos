@@ -2,9 +2,19 @@
 
 Keep all your local `Git` repos in sync with their remote counterparts by running a single command (which you can run periodically in a `cron` job if you want).
 
-`SyncRepos` will pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo.
+`SyncRepos` will pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo. When this happens, you'll see both pulls and pushes for that repo:
 
-`SyncRepos` won't try to sync a repo if the local repo contains any unstaged changes in tracked files.
+```
+  %{
+    changes_pulled: true,
+    changes_pushed: true,
+    dir: "/Users/jameslavin/Git/my_tech_resources"
+  }
+```
+
+If `SyncRepos` pulls down remote commits and unsuccessfully attempts to rebase your local commits on top, it will warn you about this and leave the repo for you to either resolve the merge conflict or revert the unsuccessful merge.
+
+`SyncRepos` won't try to sync any local repo that contains any unstaged changes in tracked files.
 
 `SyncRepos` provides command-line information and records richer debugging information in a timestamped log file each time it runs.
 
@@ -186,16 +196,34 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
+## TESTS
+
+I have created some tests. Each passes in isolation, but several generally fail when run as a suite. I need to figure out why.
+
+Running with the following seed, the tests always pass:
+
+```
+mix test test/sync_repos_test.exs --seed 679494
+```
+
+With some other seeds, I'm seeing incorrect directory paths, like:
+
+```
+*** ERROR: SyncRepos terminated because the sync_repos directory ('/Users/jameslavin/Git/sync_repos/test/support/git_dir/HtmlsToPdf/test/support/invalid_git_dirs') does not exist ***
+```
+
+I need to figure out what's causing these invalid paths.
+
 ## IDEAS FOR FUTURE
 
-* Enable adding Github repo by providing "user/repo" and a default local Git dir
+* Figure out source of failing tests when running as a suite. (They always pass individually but some often fail when run as a suite.)
+* [IN PROGRESS] Enable adding Github repo by providing "user/repo" and a default local Git dir
 * Improve documentation
 * Upload to Hex
 * User-enabled, per-repo notifications when new commits are pulled
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
 * Enable optional per-repo committing of uncommitted changes
 * Make Token a struct
-* Add tests!
 * Add strategies for syncing other resources besides Git repos
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches

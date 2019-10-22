@@ -4,24 +4,33 @@ defmodule SyncReposTest do
 
   test "git dir" do
     output = capture_io(fn -> SyncRepos.CLI.main(["-d", "./test/support/sync_dir"]) end)
-    assert output =~ "sync_dir: \"./test/support/sync_dir\""
+    # IO.inspect(output)
+    assert String.match?(output, ~r/sync_dir: \".*\/test\/support\/sync_dir\"/)
     assert output =~ "SyncRepos script completed"
     assert output =~ "Notable repos: []"
   end
 
-  # test "unchanged Git repo" do
-  #   # We'll test this using a Git repo I haven't touched in 7 years, JamesLavin/HtmlsToPdf
-  #   output =
-  #     capture_io(fn ->
-  #       catch_exit(SyncRepos.CLI.main(["-d", "./test/support/HtmlsToPdf_sync_dir"]))
-  #     end)
+  test "updating an unchanged Git repo" do
+    # We'll test this using a Git repo I haven't touched in 7 years, JamesLavin/HtmlsToPdf
+    output =
+      capture_io(fn ->
+        SyncRepos.CLI.main(["-d", "./test/support/HtmlsToPdf_sync_dir"])
+      end)
 
-  #   assert output =~
-  #            "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '[\"Joe/Smith/Bob\", \"wyle_e_coyote\"]' **"
+    # IO.inspect(output, label: "output")
 
-  #   assert output =~ "sync_dir: \"./test/support/HtmlsToPdf_sync_dir\""
-  #   assert output =~ "invalid_dirs: [\"Joe/Smith/Bob\", \"wyle_e_coyote\"]"
-  # end
+    assert String.match?(output, ~r/---- syncing .*\/test\/support\/git_dir\/HtmlsToPdf ---/)
+    assert output =~ "invalid_dirs: nil"
+    assert output =~ "halt: false"
+
+    assert String.match?(
+             output,
+             ~r/ processed: \[\n.*%{dir: \".*\/test\/support\/git_dir\/HtmlsToPdf\"}\n.*\]/s
+           )
+
+    assert output =~ "SyncRepos script completed"
+    assert output =~ "Notable repos: []"
+  end
 
   test "invalid Git repos" do
     output =
@@ -29,8 +38,10 @@ defmodule SyncReposTest do
         catch_exit(SyncRepos.CLI.main(["-d", "./test/support/invalid_git_dirs"]))
       end)
 
+    # IO.inspect(output)
+
     assert output =~
-             "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '[\"Joe/Smith/Bob\", \"wyle_e_coyote\"]' **"
+             "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '[\"Joe/Smith/Bob\", \"wyle_e_coyote\"]' ***"
   end
 
   test "invalid sync_dir" do
@@ -39,10 +50,12 @@ defmodule SyncReposTest do
         catch_exit(SyncRepos.CLI.main(["-d", "./test/support/non_existent_sync_dir"]))
       end)
 
-    assert output =~
-             "*** ERROR: SyncRepos terminated because the sync_repos directory ('./test/support/non_existent_sync_dir') does not exist ***"
+    # IO.inspect(output)
 
-    output
+    assert String.match?(
+             output,
+             ~r/\*\*\* ERROR: SyncRepos terminated because the sync_repos directory \('.*\/test\/support\/non_existent_sync_dir'\) does not exist \*\*\*/
+           )
   end
 
   test "invalid default_git_dir" do
@@ -53,7 +66,5 @@ defmodule SyncReposTest do
 
     assert output =~
              "*** ERROR: SyncRepos terminated because the config file specifies an invalid :default_git_dir, 'not_a_real_dir' ***"
-
-    output
   end
 end

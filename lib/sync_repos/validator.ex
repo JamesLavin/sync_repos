@@ -39,6 +39,7 @@ defmodule SyncRepos.Validator do
   defp invalid_dir(_path), do: false
 
   defp display_invalid_dir_error_and_terminate(token) do
+    # IO.inspect(token, label: "invalid_dir_error")
     IO.puts("")
 
     IO.puts(
@@ -54,6 +55,7 @@ defmodule SyncRepos.Validator do
   end
 
   defp display_default_git_dir_error_and_terminate(token) do
+    # IO.inspect(token, label: "default_git_dir_error")
     IO.puts("")
 
     IO.puts(
@@ -69,6 +71,7 @@ defmodule SyncRepos.Validator do
   end
 
   defp display_sync_dir_error_and_terminate(token) do
+    # IO.inspect(token, label: "sync_dir_error")
     IO.puts("")
 
     IO.puts(

@@ -13,8 +13,13 @@ defmodule SyncRepos.CommandLineParser do
       parsed_switches
       |> Enum.into(%{})
 
-    Token.new()
-    |> Map.merge(switches_map)
-    |> Map.put_new(:timestamp, Timestamp.now())
+    token =
+      Token.new()
+      |> Map.merge(switches_map)
+      |> Map.put_new(:timestamp, Timestamp.now())
+
+    token
+    |> Map.put(:sync_dir, token[:sync_dir] |> Path.expand())
+    |> IO.inspect(label: "updated token")
   end
 end
