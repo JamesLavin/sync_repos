@@ -2,6 +2,13 @@ defmodule SyncReposTest do
   use ExUnit.Case
   import ExUnit.CaptureIO
 
+  test "git dir" do
+    output = capture_io(fn -> SyncRepos.CLI.main(["-d", "./test/support/sync_dir"]) end)
+    assert output =~ "sync_dir: \"./test/support/sync_dir\""
+    assert output =~ "SyncRepos script completed"
+    assert output =~ "Notable repos: []"
+  end
+
   test "invalid sync_dir" do
     output =
       capture_io(fn ->
