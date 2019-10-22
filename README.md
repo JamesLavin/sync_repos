@@ -198,7 +198,7 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
 ## TESTS
 
-I have created some tests. Each passes in isolation, but several generally fail when run as a suite. I need to figure out why.
+I've created some tests. Each passes in isolation, but several generally fail when run as a suite. I need to figure out why.
 
 Running with the following seed, the tests always pass:
 
@@ -212,7 +212,7 @@ With some other seeds, I'm seeing incorrect directory paths, like:
 *** ERROR: SyncRepos terminated because the sync_repos directory ('/Users/jameslavin/Git/sync_repos/test/support/git_dir/HtmlsToPdf/test/support/invalid_git_dirs') does not exist ***
 ```
 
-I need to figure out what's causing these invalid paths.
+I need to figure out what's causing these invalid paths. I suspect the problem is due to trying to test this code by putting a Git repo inside `./test/support/git_dir/HtmlsToPdf`. Git won't let me store a Git repo inside another Git repo, unless it's a submodule, which isn't what I want.
 
 ## IDEAS FOR FUTURE
 
