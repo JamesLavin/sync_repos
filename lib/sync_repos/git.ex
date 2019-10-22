@@ -1,4 +1,6 @@
 defmodule SyncRepos.Git do
+  alias SyncRepos.Github
+
   @successful_pull_msg "Successfully pulled new changes from master"
   @no_remote_changes_msg "No new changes on master"
 
@@ -13,6 +15,7 @@ defmodule SyncRepos.Git do
       token
       |> Map.put(:to_process, more_dirs)
       |> Map.put(:processing, %{dir: dir, halt: false})
+      |> Github.create_missing_github_dir()
       |> cd_to_git_dir()
       |> get_branch()
       |> halt_unless_master()

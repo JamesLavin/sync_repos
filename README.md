@@ -198,25 +198,16 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
 ## TESTS
 
-I've created some tests. Each passes in isolation, but several generally fail when run as a suite. I need to figure out why.
+I've created some tests, and they're green.
 
-Running with the following seed, the tests always pass:
-
-```
-mix test test/sync_repos_test.exs --seed 679494
-```
-
-With some other seeds, I'm seeing incorrect directory paths, like:
+You run them the normal way:
 
 ```
-*** ERROR: SyncRepos terminated because the sync_repos directory ('/Users/jameslavin/Git/sync_repos/test/support/git_dir/HtmlsToPdf/test/support/invalid_git_dirs') does not exist ***
+mix test
 ```
-
-I need to figure out what's causing these invalid paths. I suspect the problem is due to trying to test this code by putting a Git repo inside `./test/support/git_dir/HtmlsToPdf`. Git won't let me store a Git repo inside another Git repo, unless it's a submodule, which isn't what I want.
 
 ## IDEAS FOR FUTURE
 
-* Figure out source of failing tests when running as a suite. (They always pass individually but some often fail when run as a suite.)
 * [IN PROGRESS] Enable adding Github repo by providing "user/repo" and a default local Git dir
 * Improve documentation
 * Upload to Hex

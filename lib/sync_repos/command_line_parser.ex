@@ -20,6 +20,5 @@ defmodule SyncRepos.CommandLineParser do
 
     token
     |> Map.put(:sync_dir, token[:sync_dir] |> Path.expand())
-    |> IO.inspect(label: "updated token")
   end
 end
