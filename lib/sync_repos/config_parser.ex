@@ -1,5 +1,5 @@
 defmodule SyncRepos.ConfigParser do
-  alias SyncRepos.Validator
+  alias SyncRepos.{Github, Validator}
 
   def read_yaml(token) do
     filename = Path.expand("#{token[:sync_dir]}/config")
@@ -8,11 +8,30 @@ defmodule SyncRepos.ConfigParser do
     default_git_dir = yaml["default_git_dir"]
 
     # TODO: Display error and exit if no `:git`?
+    # TODO: Add :errors field to Token and save `invalid_git_path: #{git_path}` in it
     git_dirs =
       (yaml["git"] || [])
-      |> Enum.map(&Path.expand/1)
+      |> Enum.map(&convert_path/1)
 
     %{token | to_process: git_dirs, default_git_dir: default_git_dir}
+    |> Validator.exit_if_any_invalid_to_process_dirs()
     |> Validator.exit_if_invalid_default_git_dir()
+  end
+
+  defp convert_path(git_path) do
+    cond do
+      is_valid_dir?(git_path) ->
+        git_path |> Path.expand()
+
+      Github.is_valid_github?(git_path) ->
+        git_path |> Github.to_github_path()
+
+      true ->
+        {:invalid, git_path}
+    end
+  end
+
+  defp is_valid_dir?(git_path) do
+    git_path |> Path.expand() |> File.dir?()
   end
 end

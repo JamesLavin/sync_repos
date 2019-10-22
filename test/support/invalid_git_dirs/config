@@ -1,0 +1,6 @@
+default_git_dir: ./test/support/git_dir
+
+git:
+  - Joe/Smith/Bob
+  - wyle_e_coyote
+  - JamesLavin/HtmlsToPdf

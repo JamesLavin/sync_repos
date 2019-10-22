@@ -6,7 +6,8 @@ defmodule SyncRepos.Token do
       halt: false,
       to_process: [],
       processing: nil,
-      processed: []
+      processed: [],
+      invalid_dirs: nil
     }
   end
 end

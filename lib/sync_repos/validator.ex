@@ -1,6 +1,6 @@
 defmodule SyncRepos.Validator do
   def exit_if_invalid_sync_dir(token) do
-    sync_dir = token[:sync_dir] |> Path.expand() |> IO.inspect()
+    sync_dir = token[:sync_dir] |> Path.expand()
 
     if File.dir?(sync_dir) do
       token
@@ -20,8 +20,40 @@ defmodule SyncRepos.Validator do
     end
   end
 
+  def exit_if_any_invalid_to_process_dirs(%{to_process: dirs} = token) do
+    invalid = invalid_dirs(dirs)
+
+    case invalid do
+      [] -> token
+      [_ | _] -> %{token | invalid_dirs: invalid} |> display_invalid_dir_error_and_terminate()
+    end
+  end
+
+  defp invalid_dirs(dirs) do
+    dirs
+    |> Enum.filter(&invalid_dir/1)
+    |> Enum.map(fn {:invalid, dir} -> dir end)
+  end
+
+  defp invalid_dir({:invalid, _path}), do: true
+  defp invalid_dir(_path), do: false
+
+  defp display_invalid_dir_error_and_terminate(token) do
+    IO.puts("")
+
+    IO.puts(
+      "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '#{
+        inspect(token[:invalid_dirs])
+      }' ***"
+    )
+
+    # NOTE: I want to use System.halt(0) but don't know how to test it
+    #       I think I could test this by using mock to replace System.halt(0) with exit(:normal)
+    exit(:normal)
+    # System.halt(0)
+  end
+
   defp display_default_git_dir_error_and_terminate(token) do
-    IO.inspect(token)
     IO.puts("")
 
     IO.puts(
@@ -31,6 +63,7 @@ defmodule SyncRepos.Validator do
     )
 
     # NOTE: I want to use System.halt(0) but don't know how to test it
+    #       I think I could test this by using mock to replace System.halt(0) with exit(:normal)
     exit(:normal)
     # System.halt(0)
   end
@@ -53,6 +86,7 @@ defmodule SyncRepos.Validator do
     )
 
     # NOTE: I want to use System.halt(0) but don't know how to test it
+    #       I think I could test this by using mock to replace System.halt(0) with exit(:normal)
     exit(:normal)
     # System.halt(0)
   end

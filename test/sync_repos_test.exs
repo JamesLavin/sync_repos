@@ -9,6 +9,33 @@ defmodule SyncReposTest do
     assert output =~ "Notable repos: []"
   end
 
+  # test "unchanged Git repo" do
+  #   # We'll test this using a Git repo I haven't touched in 7 years, JamesLavin/HtmlsToPdf
+  #   output =
+  #     capture_io(fn ->
+  #       catch_exit(SyncRepos.CLI.main(["-d", "./test/support/HtmlsToPdf_sync_dir"]))
+  #     end)
+
+  #   assert output =~
+  #            "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '[\"Joe/Smith/Bob\", \"wyle_e_coyote\"]' **"
+
+  #   assert output =~ "sync_dir: \"./test/support/HtmlsToPdf_sync_dir\""
+  #   assert output =~ "invalid_dirs: [\"Joe/Smith/Bob\", \"wyle_e_coyote\"]"
+  # end
+
+  test "invalid Git repos" do
+    output =
+      capture_io(fn ->
+        catch_exit(SyncRepos.CLI.main(["-d", "./test/support/invalid_git_dirs"]))
+      end)
+
+    assert output =~
+             "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '[\"Joe/Smith/Bob\", \"wyle_e_coyote\"]' **"
+
+    assert output =~ "sync_dir: \"./test/support/invalid_git_dirs\""
+    assert output =~ "invalid_dirs: [\"Joe/Smith/Bob\", \"wyle_e_coyote\"]"
+  end
+
   test "invalid sync_dir" do
     output =
       capture_io(fn ->

@@ -25,3 +25,5 @@ sync_repos-*.tar
 .elixir_ls
 
 README.pdf
+
+**/*sync_dir/logs
