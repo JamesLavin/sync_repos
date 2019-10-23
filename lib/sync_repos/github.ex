@@ -44,7 +44,6 @@ defmodule SyncRepos.Github do
     {_git_output, 0} = System.cmd("git", ["clone", github_path])
     :ok = File.cd(local_dir)
     {status_string, 0} = System.cmd("git", ["status"])
-    IO.inspect(status_string, label: "status_string")
 
     token
     |> put_in([:processing, :dir], local_dir)

@@ -33,14 +33,12 @@ defmodule SyncRepos.Git do
   end
 
   defp cd_to_git_dir(%{processing: %{dir: dir}} = token) when is_binary(dir) do
-    IO.inspect(token, label: "token")
     :ok = File.cd(dir)
     token
   end
 
   defp cd_to_git_dir(%{processing: %{dir: %Github{local_dir: dir}}} = token)
        when is_binary(dir) do
-    IO.inspect(token, label: "token")
     :ok = File.cd(dir)
     token
   end
