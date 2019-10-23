@@ -1,5 +1,12 @@
 defmodule SyncRepos.Display do
-  @major_fields [:dir, :halt_reason, :changes_pulled, :changes_pushed]
+  @major_fields [
+    :dir,
+    :halt_reason,
+    :changes_pulled,
+    :changes_pushed,
+    :repo_cloned,
+    :new_repo_location
+  ]
 
   def token(%{debug: true} = token) do
     token

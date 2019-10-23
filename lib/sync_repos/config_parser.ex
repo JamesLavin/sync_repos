@@ -11,20 +11,20 @@ defmodule SyncRepos.ConfigParser do
     # TODO: Add :errors field to Token and save `invalid_git_path: #{git_path}` in it
     git_dirs =
       (yaml["git"] || [])
-      |> Enum.map(&convert_path/1)
+      |> Enum.map(fn path -> convert_path(path, default_git_dir) end)
 
     %{token | to_process: git_dirs, default_git_dir: default_git_dir}
     |> Validator.exit_if_any_invalid_to_process_dirs()
     |> Validator.exit_if_invalid_default_git_dir()
   end
 
-  defp convert_path(git_path) do
+  defp convert_path(git_path, default_git_dir) do
     cond do
       is_valid_dir?(git_path) ->
         git_path |> Path.expand()
 
       Github.is_valid_github?(git_path) ->
-        git_path |> Github.to_github_path()
+        Github.create_github(git_path, default_git_dir)
 
       true ->
         {:invalid, git_path}

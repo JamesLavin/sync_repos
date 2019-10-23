@@ -9,7 +9,7 @@ defmodule SyncRepos.Git do
   def sync(%{to_process: []} = token), do: token
 
   def sync(%{to_process: [dir | more_dirs]} = token) do
-    IO.puts("----- syncing #{dir} -----")
+    IO.puts("----- syncing #{display(dir)} -----")
 
     new_token =
       token
@@ -27,14 +27,21 @@ defmodule SyncRepos.Git do
       |> Map.put(:processed, [new_token[:processing] | new_token[:processed]])
       |> Map.put(:processing, nil)
 
-    IO.puts("----- finished syncing #{dir} -----")
+    IO.puts("----- finished syncing #{display(dir)} -----")
     IO.puts("")
     sync(new_token)
   end
 
-  defp cd_to_git_dir(token) do
-    :ok = File.cd(token[:processing][:dir])
-    # File.cwd() |> IO.puts()
+  defp cd_to_git_dir(%{processing: %{dir: dir}} = token) when is_binary(dir) do
+    IO.inspect(token, label: "token")
+    :ok = File.cd(dir)
+    token
+  end
+
+  defp cd_to_git_dir(%{processing: %{dir: %Github{local_dir: dir}}} = token)
+       when is_binary(dir) do
+    IO.inspect(token, label: "token")
+    :ok = File.cd(dir)
     token
   end
 
@@ -210,6 +217,9 @@ defmodule SyncRepos.Git do
 
     put_in(new_token, [:processing, :halt], true)
   end
+
+  defp display(dir) when is_binary(dir), do: dir
+  defp display(%Github{local_dir: dir}) when is_binary(dir), do: dir
 
   # defp pull_if_behind_master(status_string) when is_binary(status_string) do
   #   case Regex.match?(~r/Your branch is ahead of 'origin\/master'/, status_string) do

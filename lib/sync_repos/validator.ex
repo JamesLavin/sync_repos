@@ -1,4 +1,6 @@
 defmodule SyncRepos.Validator do
+  alias SyncRepos.Github
+
   def exit_if_invalid_sync_dir(token) do
     sync_dir = token[:sync_dir] |> Path.expand()
 
@@ -32,11 +34,17 @@ defmodule SyncRepos.Validator do
   defp invalid_dirs(dirs) do
     dirs
     |> Enum.filter(&invalid_dir/1)
-    |> Enum.map(fn {:invalid, dir} -> dir end)
+    |> Enum.map(fn
+      {:invalid, dir} -> dir
+      dir -> dir
+    end)
   end
 
+  # TODO: Add types & typespecs
   defp invalid_dir({:invalid, _path}), do: true
-  defp invalid_dir(_path), do: false
+  defp invalid_dir(%Github{}), do: false
+  defp invalid_dir(path) when is_binary(path), do: false
+  defp invalid_dir(_path), do: true
 
   defp display_invalid_dir_error_and_terminate(token) do
     # IO.inspect(token, label: "invalid_dir_error")

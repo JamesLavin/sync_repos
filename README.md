@@ -12,6 +12,25 @@ Keep all your local `Git` repos in sync with their remote counterparts by runnin
   }
 ```
 
+You can also clone repos from Github and keep them in sync. To do so, specify a `:default_git_dir` and a list of Github repos in your `~/.sync_repos/config` file, like this:
+
+```
+default_git_dir: ~/Git
+git:
+  - ninenines/cowboy
+  - ninenines/ranch
+```
+
+`SyncRepos` will then clone `cowboy` into `~/Git/cowboy` and `ranch` into `~/Git/ranch`:
+
+```
+  %{
+    dir: "/Users/jameslavin/Git/ranch",
+    new_repo_location: "/Users/jameslavin/Git/ranch",
+    repo_cloned: true
+  }
+```
+
 If `SyncRepos` pulls down remote commits and unsuccessfully attempts to rebase your local commits on top, it will warn you about this and leave the repo for you to either resolve the merge conflict or revert the unsuccessful merge.
 
 `SyncRepos` won't try to sync any local repo that contains any unstaged changes in tracked files.
