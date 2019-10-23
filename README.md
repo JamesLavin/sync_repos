@@ -78,6 +78,8 @@ git:
   - ~/Git/sync_repos
 ```
 
+NOTE: If you specify the Github location (e.g., `plataformatec/broadway`), `SyncRepos` will automatically clone the repo for you. Once the repo exists locally, it doesn't matter whether your `config` file specifies the Github location or the local location (e.g., `~/Git/broadway`) unless the Github repository location ever changes (e.g., if `plataformatec/broadway` moved to `elixir-lang/broadway`).
+
 4) Run `sync_repos` to sync all your Git repos. You will see output like the following:
 
 ```
