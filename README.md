@@ -1,6 +1,6 @@
 # SyncRepos
 
-Keep all your local `Git` repos in sync with their remote counterparts by running a single command (which you can run periodically in a `cron` job if you want).
+Keep all your local `Git` repos in sync with their remote counterparts by running a single command (which you can run periodically in a `cron` job).
 
 `SyncRepos` will pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo. When this happens, you'll see both pulls and pushes for that repo:
 
@@ -12,7 +12,7 @@ Keep all your local `Git` repos in sync with their remote counterparts by runnin
   }
 ```
 
-You can also clone repos from Github and keep them in sync. To do so, specify a `:default_git_dir` and a list of Github repos in your `~/.sync_repos/config` file, like this:
+You can also easily clone repos from Github and keep them in sync. To do so, specify a `:default_git_dir` and a list of Github repos in your `~/.sync_repos/config` file, like this:
 
 ```
 default_git_dir: ~/Git
@@ -21,7 +21,7 @@ git:
   - ninenines/ranch
 ```
 
-`SyncRepos` will then clone `cowboy` into `~/Git/cowboy` and `ranch` into `~/Git/ranch`:
+`SyncRepos` will then create the `~/Git/cowboy` and `~/Git/ranch` directories and clone `cowboy` and `ranch` into them:
 
 ```
   %{
@@ -31,11 +31,11 @@ git:
   }
 ```
 
-If `SyncRepos` pulls down remote commits and unsuccessfully attempts to rebase your local commits on top, it will warn you about this and leave the repo for you to either resolve the merge conflict or revert the unsuccessful merge.
+If `SyncRepos` pulls down remote commits and unsuccessfully attempts to rebase your local commits on top (due to an unresolvable merge conflict), it will warn you and leave the repo for you to either resolve or revert the unsuccessful merge.
 
-`SyncRepos` won't try to sync any local repo that contains any unstaged changes in tracked files.
+`SyncRepos` won't try to sync any local repo containing unstaged changes in tracked files.
 
-`SyncRepos` provides command-line information and records richer debugging information in a timestamped log file each time it runs.
+Each time `SyncRepos` runs, it displays command-line output and logs richer debugging information in a timestamped log file each time.
 
 ## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
@@ -68,6 +68,8 @@ To use the `SyncRepos` escript:
 
 ```
 git:
+  - rusterlium/rustler
+  - plataformatec/broadway
   - ~/Git/absinthe
   - ~/Git/ecto
   - ~/Git/elixir
@@ -217,17 +219,15 @@ be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
 
 ## TESTS
 
-I've created some tests, and they're green.
+I've created some tests, and they're green (yay!).
 
 You run them the normal way:
-
 ```
 mix test
 ```
 
 ## IDEAS FOR FUTURE
 
-* [IN PROGRESS] Enable adding Github repo by providing "user/repo" and a default local Git dir
 * Improve documentation
 * Upload to Hex
 * User-enabled, per-repo notifications when new commits are pulled
@@ -238,3 +238,4 @@ mix test
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
 * Option to suppress saving all log files and instead save only the latest log file (or the last N log files?)
+* Add types & typespecs
