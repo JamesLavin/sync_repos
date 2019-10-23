@@ -30,11 +30,19 @@ defmodule SyncRepos.Display do
   end
 
   def response(%{halt: true}) do
-    "*** WARNING: Processing did not complete successfully ***"
+    IO.puts("SyncRepos script terminated prematurely\n\n")
+
+    IO.puts(IO.ANSI.reverse() <> "*** WARNING: Processing did not complete successfully ***")
+
+    IO.write(IO.ANSI.reset())
   end
 
   def response(%{} = token) do
-    "SyncRepos script completed\n\nNotable repos: #{inspect(token[:notable_repos], pretty: true)}"
+    IO.puts("SyncRepos script completed\n\n")
+
+    IO.puts(IO.ANSI.reverse() <> "Notable repos: #{inspect(token[:notable_repos], pretty: true)}")
+
+    IO.write(IO.ANSI.reset())
   end
 
   def set_notable_repos(%{processed: processed} = token) do

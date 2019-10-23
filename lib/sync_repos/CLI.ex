@@ -1,5 +1,5 @@
 defmodule SyncRepos.CLI do
-  alias SyncRepos.{CommandLineParser, ConfigParser, Display, Git, Token, Validator}
+  alias SyncRepos.{CommandLineParser, ConfigParser, Display, Git, Validator}
 
   def main(args \\ []) do
     args
@@ -11,6 +11,5 @@ defmodule SyncRepos.CLI do
     |> Display.set_notable_repos()
     |> Log.output()
     |> Display.response()
-    |> IO.puts()
   end
 end
