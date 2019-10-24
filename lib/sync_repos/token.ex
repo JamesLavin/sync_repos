@@ -8,7 +8,8 @@ defmodule SyncRepos.Token do
       to_process: [],
       processing: nil,
       processed: [],
-      invalid_dirs: nil
+      invalid_dirs: nil,
+      updated_hex_docs: []
     }
   end
 end

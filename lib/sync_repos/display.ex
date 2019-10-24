@@ -1,12 +1,5 @@
 defmodule SyncRepos.Display do
-  @major_fields [
-    :dir,
-    :halt_reason,
-    :changes_pulled,
-    :changes_pushed,
-    :repo_cloned,
-    :new_repo_location
-  ]
+  alias SyncRepos.Notable
 
   def token(%{debug: true} = token) do
     token
@@ -24,7 +17,7 @@ defmodule SyncRepos.Display do
   defp simplified(%{processed: processed} = token) do
     simplified =
       processed
-      |> Enum.map(&keep_major_fields/1)
+      |> Enum.map(&Notable.keep_major_fields/1)
 
     put_in(token, [:processed], simplified)
   end
@@ -43,22 +36,12 @@ defmodule SyncRepos.Display do
     IO.puts(IO.ANSI.reverse() <> "Notable repos: #{inspect(token[:notable_repos], pretty: true)}")
 
     IO.write(IO.ANSI.reset())
-  end
 
-  def set_notable_repos(%{processed: processed} = token) do
-    notable =
-      processed
-      |> Enum.map(&keep_major_fields/1)
-      |> Enum.reject(&map_with_only_dir_key/1)
+    IO.puts(
+      IO.ANSI.reverse() <>
+        "Updated Hex package docs: #{inspect(token[:updated_hex_docs], pretty: true)}"
+    )
 
-    put_in(token, [:notable_repos], notable)
-  end
-
-  defp map_with_only_dir_key(map) do
-    map == Map.take(map, [:dir])
-  end
-
-  defp keep_major_fields(repo) do
-    Map.take(repo, @major_fields)
+    IO.write(IO.ANSI.reset())
   end
 end

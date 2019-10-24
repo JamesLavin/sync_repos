@@ -1,5 +1,5 @@
 defmodule SyncRepos.CLI do
-  alias SyncRepos.{CommandLineParser, ConfigParser, Display, Git, HexDocs, Validator}
+  alias SyncRepos.{CommandLineParser, ConfigParser, Display, Git, HexDocs, Notable, Validator}
 
   def main(args \\ []) do
     args
@@ -9,7 +9,7 @@ defmodule SyncRepos.CLI do
     |> HexDocs.sync()
     |> Git.sync()
     |> Display.token()
-    |> Display.set_notable_repos()
+    |> Notable.set_notables()
     |> Log.output()
     |> Display.response()
   end

@@ -232,16 +232,17 @@ mix test
 
 ## IDEAS FOR FUTURE
 
+* Easy way to *add new* (not just *update existing*) Hex packages, possibly by listing Hex package names in the `config` file
 * Improve documentation
 * Upload to Hex
 * User-enabled, per-repo notifications when new commits are pulled
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
 * Enable optional per-repo committing of uncommitted changes
 * Make Token a struct
-* Add strategies for syncing other resources besides Git repos, like Hex packages!
-* Add updated Hex packages to highlighted closing output
-* Easy way to *add new* (not just *update existing*) Hex packages, possibly by listing Hex package names in the `config` file
+* Add strategies for syncing other resources (besides Git repos and Hex packages)
+* Enable auto-updating of DevDogs, Dash, Zeal, etc. documentation/code browsers
 * Add option to update only Hex docs or only Git repos
+* Add option to auto-delete outdated Hex docs
 * Enable user to specify non-default Hex docs directory
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
