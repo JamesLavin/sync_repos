@@ -1,5 +1,5 @@
 defmodule SyncRepos.Token do
-  alias SyncRepos.{Github, RepoDir}
+  alias SyncRepos.{Github, ValidRepoDir}
 
   defstruct [
     :default_git_dir,
@@ -22,9 +22,9 @@ defmodule SyncRepos.Token do
           sync_dir: String.t(),
           halt: boolean(),
           notable_repos: [String.t()],
-          to_process: [RepoDir.t()],
-          processing: nil | RepoDir.t(),
-          processed: [RepoDir.t()],
+          to_process: [ValidRepoDir.t()],
+          processing: nil | ValidRepoDir.t(),
+          processed: [ValidRepoDir.t()],
           invalid_dirs: [String.t()],
           updated_hex_docs: [String.t()],
           timestamp: nil | String.t()

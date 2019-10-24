@@ -1,5 +1,5 @@
 defmodule SyncRepos.Git do
-  alias SyncRepos.{Github, Token}
+  alias SyncRepos.{Github, Token, ValidRepoDir}
 
   @successful_pull_msg "Successfully pulled new changes from master"
   @no_remote_changes_msg "No new changes on master"
@@ -31,7 +31,9 @@ defmodule SyncRepos.Git do
     sync(new_token)
   end
 
-  @spec cd_to_git_dir(Token.t()) :: Token.t()
+  @spec cd_to_git_dir(%Token{processing: %{dir: ValidRepoDir.t()}}) :: %Token{
+          processing: %{dir: ValidRepoDir.t()}
+        }
   def cd_to_git_dir(%Token{processing: %{dir: %Github{local_dir: dir}}} = token)
       when is_binary(dir) do
     :ok = File.cd(dir)
@@ -44,14 +46,14 @@ defmodule SyncRepos.Git do
   end
 
   def cd_to_git_dir(%Token{processing: %{dir: {:invalid, _dir}}} = token) do
-    token
+    exit(:invalid_directory)
   end
 
   defp get_branch(token) do
     {branch, 0} = System.cmd("git", ["rev-parse", "--abbrev-ref", "HEAD"])
 
     new_branch = branch |> String.trim()
-    new_processing = Map.put_new(token.processing, :branch, new_branch)
+    new_processing = token.processing |> Map.put_new(:branch, new_branch)
     put_in(token.processing, new_processing)
   end
 

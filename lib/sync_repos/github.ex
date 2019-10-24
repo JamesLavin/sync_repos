@@ -1,5 +1,5 @@
 defmodule SyncRepos.Github do
-  alias SyncRepos.Token
+  alias SyncRepos.{Token, ValidRepoDir}
 
   @enforce_keys [:local_dir, :github_path, :owner, :repo]
   defstruct [:local_dir, :github_path, :owner, :repo]
@@ -24,9 +24,13 @@ defmodule SyncRepos.Github do
     "git@github.com:#{git_path}.git"
   end
 
-  @spec create_missing_github_dir(Token.t()) :: Token.t()
-  def create_missing_github_dir(%Token{processing: %{dir: dir}} = token) when is_binary(dir),
-    do: token
+  @spec create_missing_github_dir(%Token{processing: %{dir: ValidRepoDir.t(), halt: false}}) ::
+          %Token{
+            processing: %{dir: ValidRepoDir.t()}
+          }
+  def create_missing_github_dir(%Token{processing: %{dir: dir}, halt: false} = token)
+      when is_binary(dir),
+      do: token
 
   def create_missing_github_dir(
         %Token{
@@ -34,7 +38,8 @@ defmodule SyncRepos.Github do
             dir: %__MODULE__{
               local_dir: local_dir,
               github_path: github_path
-            }
+            },
+            halt: false
           }
         } = token
       )
@@ -65,12 +70,6 @@ defmodule SyncRepos.Github do
       |> Map.put_new(:status, status_string)
 
     put_in(token.processing, new_processing)
-
-    # token
-    # |> put_in([:processing, :dir], local_dir)
-    # |> put_in([:processing, :repo_cloned], true)
-    # |> put_in([:processing, :new_repo_location], local_dir)
-    # |> put_in([:processing, :status], status_string)
   end
 
   def create_github(git_path, default_git_dir) do

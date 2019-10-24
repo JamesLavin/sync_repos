@@ -24,6 +24,7 @@ defmodule SyncRepos.Validator do
     end
   end
 
+  @spec exit_if_any_invalid_to_process_dirs(Token.t()) :: Token.t()
   def exit_if_any_invalid_to_process_dirs(%Token{to_process: dirs} = token) do
     invalid = invalid_dirs(dirs)
 
