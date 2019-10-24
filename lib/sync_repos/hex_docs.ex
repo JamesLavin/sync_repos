@@ -22,7 +22,7 @@ defmodule SyncRepos.HexDocs do
   def active?(%Token{}), do: false
 
   @spec update_hex_packages(String.t(), %Token{}) :: %Token{}
-  def update_hex_packages(dir, token) do
+  def update_hex_packages(dir, %Token{} = token) when is_binary(dir) do
     IO.puts("changing into hex_docs_dir, '#{dir}'\n")
     :ok = File.cd(dir)
     {:ok, dir_names} = File.ls()
