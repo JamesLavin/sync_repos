@@ -10,7 +10,10 @@ defmodule SyncRepos.HexDocs do
     :ok = File.cd(dir)
     {:ok, dir_names} = File.ls()
     IO.puts("Updating docs for Hex packages #{inspect(dir_names, pretty: true)}\n")
-    Enum.reduce(dir_names, token, fn dir_name, token -> update_hex_docs(dir_name, token) end)
+
+    dir_names
+    |> Enum.reduce(token, fn dir_name, token -> update_hex_docs(dir_name, token) end)
+    |> display_no_hex_doc_updates_msg()
   end
 
   defp update_hex_docs(dir_name, token) do
@@ -24,4 +27,11 @@ defmodule SyncRepos.HexDocs do
       %{token | updated_hex_docs: updated_hex_docs}
     end
   end
+
+  defp display_no_hex_doc_updates_msg(%{updated_hex_docs: []} = token) do
+    IO.puts("Your Hex package documentation is already up to date\n")
+    token
+  end
+
+  defp display_no_hex_doc_updates_msg(token), do: token
 end
