@@ -9,12 +9,13 @@ defmodule SyncRepos.Notable do
     :repo_cloned,
     :new_repo_location
   ]
-  @spec set_notables(Token.t()) :: map()
+  @spec set_notables(Token.t()) :: Token.t()
   def set_notables(token) do
     token
     |> set_notable_git_repos()
   end
 
+  @spec set_notable_git_repos(Token.t()) :: Token.t()
   def set_notable_git_repos(%Token{processed: processed} = token) do
     notable =
       processed

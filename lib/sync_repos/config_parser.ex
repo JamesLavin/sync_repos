@@ -1,6 +1,7 @@
 defmodule SyncRepos.ConfigParser do
-  alias SyncRepos.{Github, Validator}
+  alias SyncRepos.{Github, Token, Validator}
 
+  @spec read_yaml(Token.t()) :: Token.t()
   def read_yaml(token) do
     filename = Path.expand("#{token.sync_dir}/config")
     {:ok, yaml} = YamlElixir.read_from_file(filename)
