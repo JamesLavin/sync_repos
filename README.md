@@ -56,6 +56,22 @@ Each time `SyncRepos` runs, it displays command-line output and logs richer debu
 
 If you use Elixir, `SyncRepos` will also keep your `Hex` package documentation up to date. (Currently, this pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. I will add the ability to specify in `config` new packages to pull documentation for.)
 
+If you put into your `~/.sync_repos/config` file something like:
+
+```
+hex_docs_dir: ~/.hex/docs/hexpm
+hexdoc_packages:
+  - telemetry_metrics
+  - plug
+  - cors_plug
+```
+
+At the end of `SyncRepo`'s output, you should see something like:
+
+```
+Updated Hex package docs: ["telemetry_metrics", "plug", "cors_plug"]
+```
+
 ## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
 Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`? `SyncRepos` addresses three time sucks that cumulatively waste a ton of my time, given how extensively I use Git:
@@ -249,8 +265,10 @@ mix test
 
 ## IDEAS FOR FUTURE
 
-* Test all the "FAILURE" cases
-* Easy way to *add new* (not just *update existing*) Hex packages, possibly by listing Hex package names in the `config` file
+* Test *all* the "FAILURE" cases
+* Test *all* the cases where we want to skip processing a repo
+* Better success message when successfully installing new HexDoc package
+* Better error message when searching for non-existent HexDoc package: "Couldn't find docs for package with name hackney or version 1.15.2" or "Couldn't find docs for package with name metrics or version 2.5.0"
 * Improve documentation
 * Upload to Hex
 * User-enabled, per-repo notifications when new commits are pulled
