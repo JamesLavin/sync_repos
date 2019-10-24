@@ -1,9 +1,24 @@
 defmodule SyncRepos.HexDocs do
+  alias SyncRepos.Token
+
   def sync(%{hex_docs_dir: dir} = token) when is_binary(dir) do
-    update_hex_packages(dir, token)
+    if File.dir?(dir) do
+      update_hex_packages(dir, token)
+    else
+      IO.puts("WARNING: '#{dir}' is not a valid HexDocs package directory\n")
+      IO.puts("WARNING: Skipping HexDocs package updating\n")
+      token
+    end
   end
 
   def sync(token), do: token
+
+  @spec active?(Token.t()) :: boolean
+  def active?(%{hex_docs_dir: hex_docs_dir}) when is_binary(hex_docs_dir) do
+    File.dir?(hex_docs_dir)
+  end
+
+  def active?(_token), do: false
 
   defp update_hex_packages(dir, token) do
     IO.puts("changing into hex_docs_dir, '#{dir}'\n")

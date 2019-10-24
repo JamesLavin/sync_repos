@@ -1,5 +1,5 @@
 defmodule SyncRepos.Display do
-  alias SyncRepos.Notable
+  alias SyncRepos.{HexDocs, Notable}
 
   def token(%{debug: true} = token) do
     token
@@ -37,11 +37,13 @@ defmodule SyncRepos.Display do
 
     IO.write(IO.ANSI.reset())
 
-    IO.puts(
-      IO.ANSI.reverse() <>
-        "Updated Hex package docs: #{inspect(token[:updated_hex_docs], pretty: true)}"
-    )
+    if HexDocs.active?(token) do
+      IO.puts(
+        IO.ANSI.reverse() <>
+          "Updated Hex package docs: #{inspect(token[:updated_hex_docs], pretty: true)}"
+      )
 
-    IO.write(IO.ANSI.reset())
+      IO.write(IO.ANSI.reset())
+    end
   end
 end
