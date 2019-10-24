@@ -1,5 +1,5 @@
 defmodule SyncRepos.Token do
-  alias SyncRepos.{Github, ValidRepoDir}
+  alias SyncRepos.ValidRepoDir
 
   defstruct [
     :default_git_dir,

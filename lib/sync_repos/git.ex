@@ -45,7 +45,7 @@ defmodule SyncRepos.Git do
     token
   end
 
-  def cd_to_git_dir(%Token{processing: %{dir: {:invalid, _dir}}} = token) do
+  def cd_to_git_dir(%Token{processing: %{dir: {:invalid, _dir}}}) do
     exit(:invalid_directory)
   end
 
@@ -198,27 +198,25 @@ defmodule SyncRepos.Git do
   defp handle_pull_and_rebase_changes_output(token, _failure_exit_code) do
     output = token.processing[:pull_rebase_output]
 
-    new_token =
-      cond do
-        # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
-        Regex.match?(~r/Auto-merging.*CONFLICT/s, output) ->
-          msg =
-            "*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict"
+    cond do
+      # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
+      Regex.match?(~r/Auto-merging.*CONFLICT/s, output) ->
+        msg = "*** WARNING: Attempted 'git pull --rebase origin master', but there is a conflict"
 
-          IO.puts(msg)
+        IO.puts(msg)
 
-          new_processing =
-            token.processing
-            |> Map.put_new(:halt_reason, msg)
-            |> Map.put_new(:halt, true)
-            |> Map.put_new(:changes_pulled, true)
+        new_processing =
+          token.processing
+          |> Map.put_new(:halt_reason, msg)
+          |> Map.put_new(:halt, true)
+          |> Map.put_new(:changes_pulled, true)
 
-          put_in(token.processing, new_processing)
+        put_in(token.processing, new_processing)
 
-        true ->
-          msg = "*** WARNING: Something unexpected happened: #{output} ***"
-          halt_with_msg(token, msg)
-      end
+      true ->
+        msg = "*** WARNING: Something unexpected happened: #{output} ***"
+        halt_with_msg(token, msg)
+    end
   end
 
   defp display(dir) when is_binary(dir), do: dir
