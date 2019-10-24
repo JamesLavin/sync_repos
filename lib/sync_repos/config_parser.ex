@@ -6,6 +6,7 @@ defmodule SyncRepos.ConfigParser do
     {:ok, yaml} = YamlElixir.read_from_file(filename)
 
     default_git_dir = yaml["default_git_dir"]
+    hex_docs_dir = yaml["hex_docs_dir"] |> expand_possibly_nil_path()
 
     # TODO: Display error and exit if no `:git`?
     # TODO: Add :errors field to Token and save `invalid_git_path: #{git_path}` in it
@@ -13,7 +14,7 @@ defmodule SyncRepos.ConfigParser do
       (yaml["git"] || [])
       |> Enum.map(fn path -> convert_path(path, default_git_dir) end)
 
-    %{token | to_process: git_dirs, default_git_dir: default_git_dir}
+    %{token | to_process: git_dirs, default_git_dir: default_git_dir, hex_docs_dir: hex_docs_dir}
     |> Validator.exit_if_any_invalid_to_process_dirs()
     |> Validator.exit_if_invalid_default_git_dir()
   end
@@ -34,4 +35,7 @@ defmodule SyncRepos.ConfigParser do
   defp is_valid_dir?(git_path) do
     git_path |> Path.expand() |> File.dir?()
   end
+
+  defp expand_possibly_nil_path(nil), do: nil
+  defp expand_possibly_nil_path(path) when is_binary(path), do: Path.expand(path)
 end

@@ -2,6 +2,8 @@
 
 Keep all your local `Git` repos in sync with their remote counterparts by running a single command (which you can run periodically in a `cron` job).
 
+Also, keep your Hex documentation up to date. (Improvements coming for this new feature. Currently, this will pull down the most recent documentation for any Hex package if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file.)
+
 `SyncRepos` will pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo. When this happens, you'll see both pulls and pushes for that repo:
 
 ```
@@ -237,6 +239,8 @@ mix test
 * Enable optional per-repo committing of uncommitted changes
 * Make Token a struct
 * Add strategies for syncing other resources besides Git repos, like Hex packages!
+* Add updated Hex packages to highlighted closing output
+* Easy way to *add new* (not just *update existing*) Hex packages, possibly by listing Hex package names in the `config` file
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
 * Option to suppress saving all log files and instead save only the latest log file (or the last N log files?)
