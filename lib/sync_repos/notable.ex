@@ -18,7 +18,7 @@ defmodule SyncRepos.Notable do
       |> Enum.map(&keep_major_fields/1)
       |> Enum.reject(&map_with_only_dir_key/1)
 
-    put_in(token, [:notable_repos], notable)
+    put_in(token.notable_repos, notable)
   end
 
   # NOTE: Unnecessary because we're storing only a list of Hex packages
@@ -26,7 +26,7 @@ defmodule SyncRepos.Notable do
   #       use to boil down complex info into a "just the facts" version
   #       for future sync types
   # def set_notable_hex_packages(%{updated_hex_docs: updated_hex_docs} = token) when is_list(updated_hex_docs) do
-  #   put_in(token, [:updated_hex_docs], updated_hex_docs)
+  #   put_in(token.updated_hex_docs, updated_hex_docs)
   # end
 
   def keep_major_fields(repo) do

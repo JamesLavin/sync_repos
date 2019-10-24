@@ -26,7 +26,7 @@ defmodule SyncReposTest do
     IO.inspect(output, label: "output")
 
     assert String.match?(output, ~r/---- syncing .*\/test\/support\/git_dir\/HtmlsToPdf ---/)
-    assert output =~ "invalid_dirs: nil"
+    assert output =~ "invalid_dirs: []"
     assert output =~ "halt: false"
 
     assert String.match?(

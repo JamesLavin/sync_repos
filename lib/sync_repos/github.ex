@@ -2,6 +2,13 @@ defmodule SyncRepos.Github do
   @enforce_keys [:local_dir, :github_path, :owner, :repo]
   defstruct [:local_dir, :github_path, :owner, :repo]
 
+  @type t() :: %__MODULE__{
+          local_dir: String.t(),
+          github_path: String.t(),
+          owner: String.t(),
+          repo: String.t()
+        }
+
   @github_path_regex ~r/git@github\.com:(?<owner>.*)\/(?<repo>.*)\.git/
 
   def is_valid_github?(git_path) do
@@ -45,11 +52,20 @@ defmodule SyncRepos.Github do
     :ok = File.cd(local_dir)
     {status_string, 0} = System.cmd("git", ["status"])
 
-    token
-    |> put_in([:processing, :dir], local_dir)
-    |> put_in([:processing, :repo_cloned], true)
-    |> put_in([:processing, :new_repo_location], local_dir)
-    |> put_in([:processing, :status], status_string)
+    new_processing =
+      token.processing
+      |> put_in([:dir], local_dir)
+      |> put_in([:repo_cloned], true)
+      |> put_in([:new_repo_location], local_dir)
+      |> put_in([:status], status_string)
+
+    put_in(token.processing, new_processing)
+
+    # token
+    # |> put_in([:processing, :dir], local_dir)
+    # |> put_in([:processing, :repo_cloned], true)
+    # |> put_in([:processing, :new_repo_location], local_dir)
+    # |> put_in([:processing, :status], status_string)
   end
 
   def create_github(git_path, default_git_dir) do

@@ -38,8 +38,8 @@ defmodule SyncRepos.HexDocs do
       token
     else
       IO.puts("updating docs for Hex package '#{dir_name}'")
-      updated_hex_docs = [dir_name | token[:updated_hex_docs]]
-      %{token | updated_hex_docs: updated_hex_docs}
+      updated_hex_docs = [dir_name | token.updated_hex_docs]
+      put_in(token.updated_hex_docs, updated_hex_docs)
     end
   end
 

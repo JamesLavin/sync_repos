@@ -22,10 +22,9 @@ defmodule SyncRepos.Git do
       # |> ls_files()
       |> git_status()
 
-    new_token =
-      new_token
-      |> Map.put(:processed, [new_token[:processing] | new_token[:processed]])
-      |> Map.put(:processing, nil)
+    new_processed = [new_token.processing | new_token.processed]
+    new_token = put_in(new_token.processed, new_processed)
+    new_token = put_in(new_token.processing, nil)
 
     IO.puts("----- finished syncing #{display(dir)} -----")
     IO.puts("")
@@ -52,8 +51,9 @@ defmodule SyncRepos.Git do
   defp get_branch(token) do
     {branch, 0} = System.cmd("git", ["rev-parse", "--abbrev-ref", "HEAD"])
 
-    token
-    |> put_in([:processing, :branch], branch |> String.trim())
+    new_branch = branch |> String.trim()
+    new_processing = Map.put_new(token.processing, :branch, new_branch)
+    put_in(token.processing, new_processing)
   end
 
   defp halt_unless_master(%{processing: %{branch: "master"}} = token) do
@@ -61,20 +61,28 @@ defmodule SyncRepos.Git do
   end
 
   defp halt_unless_master(%{processing: %{branch: branch}} = token) do
-    token
-    |> put_in([:processing, :halt], true)
-    |> put_in(
-      [:processing, :halt_reason],
-      "*** FAILURE: Branch '#{branch}' is currently checked out ***"
-    )
+    new_processing =
+      token.processing
+      |> Map.put_new(:halt, true)
+      |> Map.put_new(
+        :halt_reason,
+        "*** FAILURE: Branch '#{branch}' is currently checked out ***"
+      )
+
+    put_in(token.processing, new_processing)
   end
 
   defp git_status(token) do
     {status_string, 0} = System.cmd("git", ["status"])
     # status_string |> IO.inspect(label: "status_string")
 
+    new_processing =
+      token.processing
+      |> Map.put_new(:status, status_string)
+
+    token = put_in(token.processing, new_processing)
+
     token
-    |> put_in([:processing, :status], status_string)
     |> fail_if_unstaged_changes()
     |> fail_if_uncommitted_changes()
     |> pull_and_rebase_changes()
@@ -149,10 +157,12 @@ defmodule SyncRepos.Git do
        when is_binary(status_string) do
     {pull_rebase_output, exit_code} = System.cmd("git", ["pull", "--rebase", "origin", "master"])
 
-    new_token =
-      token
-      |> put_in([:processing, :pull_rebase_output], pull_rebase_output)
-      |> put_in([:processing, :pull_rebase_exit_code], exit_code)
+    new_processing =
+      token.processing
+      |> Map.put_new(:pull_rebase_output, pull_rebase_output)
+      |> Map.put_new(:pull_rebase_exit_code, exit_code)
+
+    new_token = put_in(token.processing, new_processing)
 
     handle_pull_and_rebase_changes_output(new_token, exit_code)
   end
@@ -161,39 +171,43 @@ defmodule SyncRepos.Git do
     do: token
 
   defp handle_pull_and_rebase_changes_output(token, 0) do
-    output = token[:processing][:pull_rebase_output]
+    output = token.processing[:pull_rebase_output]
 
     cond do
       # ~r/.../s is `dotall`, which  "causes dot to match newlines and also set newline to anycrlf"
       Regex.match?(~r/Updating.*Fast-forward/s, output) ->
         IO.puts(@successful_pull_msg)
-        put_in(token, [:processing, :changes_pulled], true)
+        update_with_changes_pulled(token)
 
       Regex.match?(~r/Fast-forwarded master to/s, output) ->
         IO.puts(@successful_pull_msg)
-        put_in(token, [:processing, :changes_pulled], true)
+        update_with_changes_pulled(token)
 
       Regex.match?(~r/rewinding head to replay your work/, output) ->
         IO.puts(@successful_pull_msg)
-        put_in(token, [:processing, :changes_pulled], true)
+        update_with_changes_pulled(token)
 
       Regex.match?(~r/Already up to date/, output) ->
-        put_in(token, [:processing, :info], @no_remote_changes_msg)
+        update_with_no_remote_changes(token)
 
       Regex.match?(~r/Current branch master is up to date/, output) ->
-        put_in(token, [:processing, :info], @no_remote_changes_msg)
+        update_with_no_remote_changes(token)
 
       true ->
         msg = "*** WARNING: Something unexpected happened: #{output} ***"
         IO.puts(msg)
 
-        put_in(token, [:processing, :halt], true)
-        |> put_in([:processing, :halt_reason], msg)
+        new_processing =
+          token.processing
+          |> Map.put(:halt, true)
+          |> Map.put(:halt_reason, msg)
+
+        put_in(token.processing, new_processing)
     end
   end
 
   defp handle_pull_and_rebase_changes_output(token, _failure_exit_code) do
-    output = token[:processing][:pull_rebase_output]
+    output = token.processing[:pull_rebase_output]
 
     new_token =
       cond do
@@ -218,6 +232,16 @@ defmodule SyncRepos.Git do
 
   defp display(dir) when is_binary(dir), do: dir
   defp display(%Github{local_dir: dir}) when is_binary(dir), do: dir
+
+  defp update_with_changes_pulled(token) do
+    new_processing = Map.put(token.processing, :changes_pulled, true)
+    put_in(token.processing, new_processing)
+  end
+
+  defp update_with_no_remote_changes(token) do
+    new_processing = Map.put(token.processing, :info, @no_remote_changes_msg)
+    put_in(token.processing, new_processing)
+  end
 
   # defp pull_if_behind_master(status_string) when is_binary(status_string) do
   #   case Regex.match?(~r/Your branch is ahead of 'origin\/master'/, status_string) do

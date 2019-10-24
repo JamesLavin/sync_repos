@@ -2,7 +2,7 @@ defmodule SyncRepos.ConfigParser do
   alias SyncRepos.{Github, Validator}
 
   def read_yaml(token) do
-    filename = Path.expand("#{token[:sync_dir]}/config")
+    filename = Path.expand("#{token.sync_dir}/config")
     {:ok, yaml} = YamlElixir.read_from_file(filename)
 
     default_git_dir = yaml["default_git_dir"]
