@@ -1,27 +1,45 @@
 defmodule SyncRepos.Github do
+  alias SyncRepos.{Token, ValidRepoDir}
+
   @enforce_keys [:local_dir, :github_path, :owner, :repo]
   defstruct [:local_dir, :github_path, :owner, :repo]
 
+  @type t() :: %__MODULE__{
+          local_dir: String.t(),
+          github_path: String.t(),
+          owner: String.t(),
+          repo: String.t()
+        }
+
   @github_path_regex ~r/git@github\.com:(?<owner>.*)\/(?<repo>.*)\.git/
 
+  @spec is_valid_github?(binary) :: boolean
   def is_valid_github?(git_path) do
     regex = ~r/^[[:alnum:]_-]+\/[[:alnum:]_-]+$/
     String.match?(git_path, regex)
   end
 
-  def to_github_path(git_path) do
+  @spec to_github_path(String.t()) :: String.t()
+  def to_github_path(git_path) when is_binary(git_path) do
     "git@github.com:#{git_path}.git"
   end
 
-  def create_missing_github_dir(%{processing: %{dir: dir}} = token) when is_binary(dir), do: token
+  @spec create_missing_github_dir(%Token{processing: %{dir: ValidRepoDir.t(), halt: false}}) ::
+          %Token{
+            processing: %{dir: ValidRepoDir.t()}
+          }
+  def create_missing_github_dir(%Token{processing: %{dir: dir}, halt: false} = token)
+      when is_binary(dir),
+      do: token
 
   def create_missing_github_dir(
-        %{
+        %Token{
           processing: %{
             dir: %__MODULE__{
               local_dir: local_dir,
               github_path: github_path
-            }
+            },
+            halt: false
           }
         } = token
       )
@@ -45,11 +63,13 @@ defmodule SyncRepos.Github do
     :ok = File.cd(local_dir)
     {status_string, 0} = System.cmd("git", ["status"])
 
-    token
-    |> put_in([:processing, :dir], local_dir)
-    |> put_in([:processing, :repo_cloned], true)
-    |> put_in([:processing, :new_repo_location], local_dir)
-    |> put_in([:processing, :status], status_string)
+    new_processing =
+      token.processing
+      |> Map.put_new(:repo_cloned, true)
+      |> Map.put_new(:new_repo_location, local_dir)
+      |> Map.put_new(:status, status_string)
+
+    put_in(token.processing, new_processing)
   end
 
   def create_github(git_path, default_git_dir) do

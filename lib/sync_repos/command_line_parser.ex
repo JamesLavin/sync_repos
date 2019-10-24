@@ -19,6 +19,6 @@ defmodule SyncRepos.CommandLineParser do
       |> Map.put_new(:timestamp, Timestamp.now())
 
     token
-    |> Map.put(:sync_dir, token[:sync_dir] |> Path.expand())
+    |> Map.put(:sync_dir, token.sync_dir |> Path.expand())
   end
 end

@@ -1,8 +1,9 @@
 defmodule SyncRepos.Validator do
-  alias SyncRepos.Github
+  alias SyncRepos.{Github, Token}
 
-  def exit_if_invalid_sync_dir(token) do
-    sync_dir = token[:sync_dir] |> Path.expand()
+  @spec exit_if_invalid_sync_dir(Token.t()) :: Token.t()
+  def exit_if_invalid_sync_dir(%Token{} = token) do
+    sync_dir = token.sync_dir |> Path.expand()
 
     if File.dir?(sync_dir) do
       token
@@ -11,9 +12,10 @@ defmodule SyncRepos.Validator do
     end
   end
 
-  def exit_if_invalid_default_git_dir(%{default_git_dir: nil} = token), do: token
+  @spec exit_if_invalid_default_git_dir(Token.t()) :: Token.t()
+  def exit_if_invalid_default_git_dir(%Token{default_git_dir: nil} = token), do: token
 
-  def exit_if_invalid_default_git_dir(%{default_git_dir: default_git_dir} = token) do
+  def exit_if_invalid_default_git_dir(%Token{default_git_dir: default_git_dir} = token) do
     dgd = default_git_dir |> Path.expand()
 
     case File.dir?(dgd) do
@@ -22,7 +24,8 @@ defmodule SyncRepos.Validator do
     end
   end
 
-  def exit_if_any_invalid_to_process_dirs(%{to_process: dirs} = token) do
+  @spec exit_if_any_invalid_to_process_dirs(Token.t()) :: Token.t()
+  def exit_if_any_invalid_to_process_dirs(%Token{to_process: dirs} = token) do
     invalid = invalid_dirs(dirs)
 
     case invalid do
@@ -52,7 +55,7 @@ defmodule SyncRepos.Validator do
 
     IO.puts(
       "*** ERROR: SyncRepos terminated because the config file specifies one or more invalid :git directories, '#{
-        inspect(token[:invalid_dirs])
+        inspect(token.invalid_dirs)
       }' ***"
     )
 
@@ -68,7 +71,7 @@ defmodule SyncRepos.Validator do
 
     IO.puts(
       "*** ERROR: SyncRepos terminated because the config file specifies an invalid :default_git_dir, '#{
-        token[:default_git_dir]
+        token.default_git_dir
       }' ***"
     )
 
@@ -83,7 +86,7 @@ defmodule SyncRepos.Validator do
     IO.puts("")
 
     IO.puts(
-      "*** ERROR: SyncRepos terminated because the sync_repos directory ('#{token[:sync_dir]}') does not exist ***"
+      "*** ERROR: SyncRepos terminated because the sync_repos directory ('#{token.sync_dir}') does not exist ***"
     )
 
     IO.puts("SyncRepo's default directory is ~/.sync_repos")

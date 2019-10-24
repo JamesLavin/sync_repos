@@ -24,6 +24,7 @@ defmodule SyncRepos.MixProject do
 
   defp deps do
     [
+      {:dialyxir, "~> 1.0.0-rc.7", only: [:dev], runtime: false},
       {:yaml_elixir, "~> 2.4.0"}
     ]
   end

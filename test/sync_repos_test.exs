@@ -26,12 +26,12 @@ defmodule SyncReposTest do
     IO.inspect(output, label: "output")
 
     assert String.match?(output, ~r/---- syncing .*\/test\/support\/git_dir\/HtmlsToPdf ---/)
-    assert output =~ "invalid_dirs: nil"
+    assert output =~ "invalid_dirs: []"
     assert output =~ "halt: false"
 
     assert String.match?(
              output,
-             ~r/ processed: \[\n    %{\n      dir: %SyncRepos.Github{\n        github_path: \"git@github.com:JamesLavin\/HtmlsToPdf.git\",\n        local_dir: \".*\/test\/support\/git_dir\/HtmlsToPdf\",\n        owner: \"JamesLavin\",\n        repo: \"HtmlsToPdf\"\n      }\n    }\n  ]/s
+             ~r/ processed: \[\n    %{\n      dir: %SyncRepos.Github{\n        github_path: \"git@github.com:JamesLavin\/HtmlsToPdf.git\",\n        local_dir: \".*\/test\/support\/git_dir\/HtmlsToPdf\",\n        owner: \"JamesLavin\",\n        repo: \"HtmlsToPdf\"\n      },\n      new_repo_location: \".*\/test\/support\/git_dir\/HtmlsToPdf\",\n      repo_cloned: true\n    }\n  ]/s
            )
 
     assert output =~ "SyncRepos script completed"
