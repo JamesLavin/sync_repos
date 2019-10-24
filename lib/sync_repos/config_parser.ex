@@ -1,5 +1,5 @@
 defmodule SyncRepos.ConfigParser do
-  alias SyncRepos.{Github, Token, Validator}
+  alias SyncRepos.{Github, RepoDir, Token, Validator}
 
   @spec read_yaml(Token.t()) :: Token.t()
   def read_yaml(%Token{} = token) do
@@ -18,7 +18,8 @@ defmodule SyncRepos.ConfigParser do
 
   # TODO: Display error and exit if no `:git`?
   # TODO: Add :errors field to Token and save `invalid_git_path: #{git_path}` in it
-  defp git_dirs_from_yaml(yaml) do
+  @spec git_dirs_from_yaml(nil | keyword | map) :: [RepoDir.t()]
+  def git_dirs_from_yaml(yaml) do
     default_git_dir = yaml["default_git_dir"]
 
     (yaml["git"] || [])

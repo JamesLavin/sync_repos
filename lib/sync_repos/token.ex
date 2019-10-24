@@ -12,7 +12,8 @@ defmodule SyncRepos.Token do
     :processed,
     :invalid_dirs,
     :updated_hex_docs,
-    :timestamp
+    :timestamp,
+    debug: false
   ]
 
   # TODO: Make a type for the map()

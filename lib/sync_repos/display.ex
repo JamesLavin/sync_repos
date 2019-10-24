@@ -1,12 +1,12 @@
 defmodule SyncRepos.Display do
   alias SyncRepos.{HexDocs, Notable, Token}
 
-  def token(%{debug: true} = token) do
+  def token(%Token{debug: true} = token) do
     token
     |> IO.inspect()
   end
 
-  def token(token) do
+  def token(%Token{} = token) do
     token
     |> simplified()
     |> IO.inspect()

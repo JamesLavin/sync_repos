@@ -1,7 +1,8 @@
 defmodule SyncRepos.HexDocs do
   alias SyncRepos.Token
 
-  def sync(%{hex_docs_dir: dir} = token) when is_binary(dir) do
+  @spec sync(Token.t()) :: Token.t()
+  def sync(%Token{hex_docs_dir: dir} = token) when is_binary(dir) do
     if File.dir?(dir) do
       update_hex_packages(dir, token)
     else
@@ -11,16 +12,17 @@ defmodule SyncRepos.HexDocs do
     end
   end
 
-  def sync(token), do: token
+  def sync(%Token{} = token), do: token
 
   @spec active?(Token.t()) :: boolean
-  def active?(%{hex_docs_dir: hex_docs_dir}) when is_binary(hex_docs_dir) do
+  def active?(%Token{hex_docs_dir: hex_docs_dir}) when is_binary(hex_docs_dir) do
     File.dir?(hex_docs_dir)
   end
 
-  def active?(_token), do: false
+  def active?(%Token{}), do: false
 
-  defp update_hex_packages(dir, token) do
+  @spec update_hex_packages(String.t(), %Token{}) :: %Token{}
+  def update_hex_packages(dir, token) do
     IO.puts("changing into hex_docs_dir, '#{dir}'\n")
     :ok = File.cd(dir)
     {:ok, dir_names} = File.ls()
