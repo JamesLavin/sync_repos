@@ -9,6 +9,7 @@ defmodule SyncRepos.Notable do
     :repo_cloned,
     :new_repo_location
   ]
+
   @spec set_notables(Token.t()) :: Token.t()
   def set_notables(token) do
     token
@@ -33,6 +34,7 @@ defmodule SyncRepos.Notable do
   #   put_in(token.updated_hex_docs, updated_hex_docs)
   # end
 
+  @spec keep_major_fields(map()) :: map()
   def keep_major_fields(repo) do
     Map.take(repo, @major_fields)
   end

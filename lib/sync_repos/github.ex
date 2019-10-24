@@ -1,4 +1,6 @@
 defmodule SyncRepos.Github do
+  alias SyncRepos.Token
+
   @enforce_keys [:local_dir, :github_path, :owner, :repo]
   defstruct [:local_dir, :github_path, :owner, :repo]
 
@@ -11,19 +13,23 @@ defmodule SyncRepos.Github do
 
   @github_path_regex ~r/git@github\.com:(?<owner>.*)\/(?<repo>.*)\.git/
 
+  @spec is_valid_github?(binary) :: boolean
   def is_valid_github?(git_path) do
     regex = ~r/^[[:alnum:]_-]+\/[[:alnum:]_-]+$/
     String.match?(git_path, regex)
   end
 
-  def to_github_path(git_path) do
+  @spec to_github_path(String.t()) :: String.t()
+  def to_github_path(git_path) when is_binary(git_path) do
     "git@github.com:#{git_path}.git"
   end
 
-  def create_missing_github_dir(%{processing: %{dir: dir}} = token) when is_binary(dir), do: token
+  @spec create_missing_github_dir(Token.t()) :: Token.t()
+  def create_missing_github_dir(%Token{processing: %{dir: dir}} = token) when is_binary(dir),
+    do: token
 
   def create_missing_github_dir(
-        %{
+        %Token{
           processing: %{
             dir: %__MODULE__{
               local_dir: local_dir,
