@@ -72,6 +72,8 @@ At the end of `SyncRepo`'s output, you should see something like:
 Updated Hex package docs: ["telemetry_metrics", "plug", "cors_plug"]
 ```
 
+Also, if a newer version of that package's documentation is ever published to HexDocs, `SyncRepos` will automatically pull it down for you.
+
 ## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
 Updating a Git repo takes just seconds, so why did I bother creating `SyncRepos`? `SyncRepos` addresses three time sucks that cumulatively waste a ton of my time, given how extensively I use Git:
