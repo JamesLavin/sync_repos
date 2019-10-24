@@ -16,7 +16,7 @@ defmodule SyncRepos.Notable do
     notable =
       processed
       |> Enum.map(&keep_major_fields/1)
-      |> Enum.reject(&map_with_only_dir_key/1)
+      |> Enum.reject(&no_significant_major_fields/1)
 
     put_in(token.notable_repos, notable)
   end
@@ -33,7 +33,13 @@ defmodule SyncRepos.Notable do
     Map.take(repo, @major_fields)
   end
 
-  defp map_with_only_dir_key(map) do
-    map == Map.take(map, [:dir])
+  defp no_significant_major_fields(%_{} = struct) do
+    struct
+    |> Map.from_struct()
+    |> no_significant_major_fields()
+  end
+
+  defp no_significant_major_fields(map) when is_map(map) do
+    map == Map.take(map, [:dir, :repo_cloned]) && map[:repo_cloned] == false
   end
 end

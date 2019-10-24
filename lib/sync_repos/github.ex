@@ -54,7 +54,7 @@ defmodule SyncRepos.Github do
 
     new_processing =
       token.processing
-      |> put_in([:dir], local_dir)
+      # |> put_in([:local_dir], local_dir)
       |> put_in([:repo_cloned], true)
       |> put_in([:new_repo_location], local_dir)
       |> put_in([:status], status_string)
