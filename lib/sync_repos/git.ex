@@ -1,14 +1,15 @@
 defmodule SyncRepos.Git do
-  alias SyncRepos.Github
+  alias SyncRepos.{Github, Token}
 
   @successful_pull_msg "Successfully pulled new changes from master"
   @no_remote_changes_msg "No new changes on master"
 
-  def sync(%{halt: true} = token), do: token
+  @spec sync(Token.t()) :: Token.t()
+  def sync(%Token{halt: true} = token), do: token
 
-  def sync(%{to_process: []} = token), do: token
+  def sync(%Token{to_process: []} = token), do: token
 
-  def sync(%{to_process: [dir | more_dirs]} = token) do
+  def sync(%Token{to_process: [dir | more_dirs]} = token) do
     IO.puts("----- syncing #{display(dir)} -----")
 
     new_token =
@@ -19,7 +20,6 @@ defmodule SyncRepos.Git do
       |> cd_to_git_dir()
       |> get_branch()
       |> halt_unless_master()
-      # |> ls_files()
       |> git_status()
 
     new_processed = [new_token.processing | new_token.processed]
@@ -31,20 +31,19 @@ defmodule SyncRepos.Git do
     sync(new_token)
   end
 
-  defp cd_to_git_dir(%{processing: %{dir: dir}} = token) when is_binary(dir) do
+  @spec cd_to_git_dir(Token.t()) :: Token.t()
+  def cd_to_git_dir(%Token{processing: %{dir: %Github{local_dir: dir}}} = token)
+      when is_binary(dir) do
     :ok = File.cd(dir)
     token
   end
 
-  defp cd_to_git_dir(%{processing: %{dir: %Github{local_dir: dir}}} = token)
-       when is_binary(dir) do
+  def cd_to_git_dir(%Token{processing: %{dir: dir}} = token) when is_binary(dir) do
     :ok = File.cd(dir)
     token
   end
 
-  defp ls_files(token) do
-    {:ok, files} = File.ls()
-    files |> IO.puts()
+  def cd_to_git_dir(%Token{processing: %{dir: {:invalid, _dir}}} = token) do
     token
   end
 
