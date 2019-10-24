@@ -241,6 +241,8 @@ mix test
 * Add strategies for syncing other resources besides Git repos, like Hex packages!
 * Add updated Hex packages to highlighted closing output
 * Easy way to *add new* (not just *update existing*) Hex packages, possibly by listing Hex package names in the `config` file
+* Add option to update only Hex docs or only Git repos
+* Enable user to specify non-default Hex docs directory
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
 * Option to suppress saving all log files and instead save only the latest log file (or the last N log files?)
