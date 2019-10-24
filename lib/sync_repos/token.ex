@@ -11,12 +11,13 @@ defmodule SyncRepos.Token do
     :processing,
     :processed,
     :invalid_dirs,
-    :updated_hex_docs
+    :updated_hex_docs,
+    :timestamp
   ]
 
   # TODO: Make a type for the map()
   @type t() :: %__MODULE__{
-          default_git_dir: nil | [String.t()],
+          default_git_dir: nil | String.t(),
           hex_docs_dir: nil | String.t(),
           sync_dir: String.t(),
           halt: boolean(),
@@ -25,7 +26,8 @@ defmodule SyncRepos.Token do
           processing: nil | map(),
           processed: [map()],
           invalid_dirs: [String.t()],
-          updated_hex_docs: [String.t()]
+          updated_hex_docs: [String.t()],
+          timestamp: nil | String.t()
         }
 
   def new do
@@ -39,7 +41,8 @@ defmodule SyncRepos.Token do
       processing: nil,
       processed: [],
       invalid_dirs: [],
-      updated_hex_docs: []
+      updated_hex_docs: [],
+      timestamp: ""
     }
   end
 end

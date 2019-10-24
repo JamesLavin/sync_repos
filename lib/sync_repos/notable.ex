@@ -1,4 +1,6 @@
 defmodule SyncRepos.Notable do
+  alias SyncRepos.Token
+
   @major_fields [
     :dir,
     :halt_reason,
@@ -7,12 +9,13 @@ defmodule SyncRepos.Notable do
     :repo_cloned,
     :new_repo_location
   ]
+  @spec set_notables(Token.t()) :: map()
   def set_notables(token) do
     token
     |> set_notable_git_repos()
   end
 
-  def set_notable_git_repos(%{processed: processed} = token) do
+  def set_notable_git_repos(%Token{processed: processed} = token) do
     notable =
       processed
       |> Enum.map(&keep_major_fields/1)
