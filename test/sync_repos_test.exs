@@ -25,13 +25,13 @@ defmodule SyncReposTest do
 
     IO.inspect(output, label: "output")
 
-    assert String.match?(output, ~r/---- syncing git@github.com:JamesLavin\/HtmlsToPdf\.git ---/)
+    assert String.match?(output, ~r/---- syncing .*\/test\/support\/git_dir\/HtmlsToPdf ---/)
     assert output =~ "invalid_dirs: nil"
     assert output =~ "halt: false"
 
     assert String.match?(
              output,
-             ~r/ processed: \[\n.*%{dir: \".*\/test\/support\/git_dir\/HtmlsToPdf\"}\n.*\]/s
+             ~r/ processed: \[\n    %{\n      dir: %SyncRepos.Github{\n        github_path: \"git@github.com:JamesLavin\/HtmlsToPdf.git\",\n        local_dir: \".*\/test\/support\/git_dir\/HtmlsToPdf\",\n        owner: \"JamesLavin\",\n        repo: \"HtmlsToPdf\"\n      }\n    }\n  ]/s
            )
 
     assert output =~ "SyncRepos script completed"
@@ -39,7 +39,7 @@ defmodule SyncReposTest do
     # assert output =~ "Notable repos: []"
     assert String.match?(
              output,
-             ~r/---- finished syncing git@github.com:JamesLavin\/HtmlsToPdf\.git ---/
+             ~r/---- finished syncing .*\/test\/support\/git_dir\/HtmlsToPdf ---/
            )
 
     # confirm dir & files exist
