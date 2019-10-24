@@ -97,10 +97,7 @@ defmodule SyncRepos.Git do
       case Regex.match?(~r/Changes not staged for commit:/, status_string) do
         true ->
           msg = "*** FAILURE: Cannot sync because Git repo has unstaged changes ***"
-          IO.puts(msg)
-
-          put_in(token, [:processing, :halt], true)
-          |> put_in([:processing, :halt_reason], msg)
+          halt_with_msg(token, msg)
 
         false ->
           token
@@ -117,10 +114,7 @@ defmodule SyncRepos.Git do
       case Regex.match?(~r/Changes to be committed:/, status_string) do
         true ->
           msg = "*** FAILURE: Cannot sync because Git repo has staged, uncommitted changes ***"
-          IO.puts(msg)
-
-          put_in(token, [:processing, :halt], true)
-          |> put_in([:processing, :halt_reason], msg)
+          halt_with_msg(token, msg)
 
         false ->
           token
@@ -148,7 +142,8 @@ defmodule SyncRepos.Git do
 
   defp push_changes(token) do
     System.cmd("git", ["push", "origin", "master"])
-    put_in(token, [:processing, :changes_pushed], true)
+    new_processing = token.processing |> Map.put_new(:changes_pushed, true)
+    put_in(token.processing, new_processing)
   end
 
   defp pull_and_rebase_changes(%{processing: %{halt: true}} = token), do: token
@@ -195,14 +190,7 @@ defmodule SyncRepos.Git do
 
       true ->
         msg = "*** WARNING: Something unexpected happened: #{output} ***"
-        IO.puts(msg)
-
-        new_processing =
-          token.processing
-          |> Map.put(:halt, true)
-          |> Map.put(:halt_reason, msg)
-
-        put_in(token.processing, new_processing)
+        halt_with_msg(token, msg)
     end
   end
 
@@ -218,16 +206,18 @@ defmodule SyncRepos.Git do
 
           IO.puts(msg)
 
-          put_in(token, [:processing, :halt_reason], msg)
-          |> put_in([:processing, :changes_pulled], true)
+          new_processing =
+            token.processing
+            |> Map.put_new(:halt_reason, msg)
+            |> Map.put_new(:halt, true)
+            |> Map.put_new(:changes_pulled, true)
+
+          put_in(token.processing, new_processing)
 
         true ->
           msg = "*** WARNING: Something unexpected happened: #{output} ***"
-          IO.puts(msg)
-          put_in(token, [:processing, :halt_reason], msg)
+          halt_with_msg(token, msg)
       end
-
-    put_in(new_token, [:processing, :halt], true)
   end
 
   defp display(dir) when is_binary(dir), do: dir
@@ -240,6 +230,17 @@ defmodule SyncRepos.Git do
 
   defp update_with_no_remote_changes(token) do
     new_processing = Map.put(token.processing, :info, @no_remote_changes_msg)
+    put_in(token.processing, new_processing)
+  end
+
+  defp halt_with_msg(token, msg) do
+    IO.puts(msg)
+
+    new_processing =
+      token.processing
+      |> Map.put_new(:halt, true)
+      |> Map.put_new(:halt_reason, msg)
+
     put_in(token.processing, new_processing)
   end
 
