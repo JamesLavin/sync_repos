@@ -46,6 +46,6 @@ defmodule SyncRepos.Notable do
   end
 
   defp no_significant_major_fields(map) when is_map(map) do
-    map == Map.take(map, [:dir, :repo_cloned]) && map[:repo_cloned] == false
+    map == Map.take(map, [:dir])
   end
 end
