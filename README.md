@@ -1,10 +1,27 @@
 # SyncRepos
 
-Keep all your local `Git` repos in sync with their remote counterparts by running a single command (which you can run periodically in a `cron` job).
+With a single command (which you can run periodically in a `cron` job):
 
-Also, keep your Hex documentation up to date. (Improvements coming for this new feature. Currently, this will pull down the most recent documentation for any Hex package if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file.)
+1. Keep all your local `Git` repos in sync with their remote counterparts; and,
 
-`SyncRepos` will pull down remote changes and -- if your local repo has unpushed commits -- rebase your local unpushed commits on top of the remote branch, then push your changes up to the remote repo. When this happens, you'll see both pulls and pushes for that repo:
+2. (If you use Elixir) Keep your `Hex` package documentation up to date. (Currently, this pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. I will add the ability to specify in `config` new packages to pull documentation for.)
+
+## Git Sync Functionality
+
+You can sync any existing repo(s) with their remote Github counterparts by listing the local repos' locations under `git:` in your `~/.sync_repos/config` *YAML* file, as follows:
+
+```
+git:
+  - ~/Git/my_tech_resources
+```
+
+* If a `Git` repo has unstaged or uncommitted work (except in untracked files), `SyncRepos` will skip that repo, leaving it untouched.
+
+* If a `Git` repo is clean, `SyncRepos` will pull down remote changes.
+
+* If a `Git` repo has committed changes that haven't been pushed to Github, `SyncRepos` will pull down any remote commits and rebase your local unpushed commits on top of the latest remote branch. Unless unresolvable merge conflicts arise, `SyncRepos` will then push your changes up to the remote repo. When this happens, you'll see both pulls and pushes for that repo:
+
+* If `SyncRepos` pulls down remote commits and unsuccessfully attempts to rebase your local commits on top (due to an unresolvable merge conflict), it will warn you and leave the repo for you to either resolve the conflicts or revert the unsuccessful merge.
 
 ```
   %{
@@ -14,7 +31,7 @@ Also, keep your Hex documentation up to date. (Improvements coming for this new 
   }
 ```
 
-You can also easily clone repos from Github and keep them in sync. To do so, specify a `:default_git_dir` and a list of Github repos in your `~/.sync_repos/config` file, like this:
+You can also easily clone repos from Github and keep them in sync. To do so, specify a `:default_git_dir` (the root directory where new `Git` directories cloned from Github will be placed) and a list of Github repos in your `~/.sync_repos/config` file, like this:
 
 ```
 default_git_dir: ~/Git
@@ -33,11 +50,29 @@ git:
   }
 ```
 
-If `SyncRepos` pulls down remote commits and unsuccessfully attempts to rebase your local commits on top (due to an unresolvable merge conflict), it will warn you and leave the repo for you to either resolve or revert the unsuccessful merge.
-
-`SyncRepos` won't try to sync any local repo containing unstaged changes in tracked files.
-
 Each time `SyncRepos` runs, it displays command-line output and logs richer debugging information in a timestamped log file each time.
+
+##  HexDocs Updating Functionality
+
+If you use Elixir, `SyncRepos` will also keep your `Hex` package documentation up to date. (Currently, this pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. I will add the ability to specify in `config` new packages to pull documentation for.)
+
+If you put into your `~/.sync_repos/config` file something like:
+
+```
+hex_docs_dir: ~/.hex/docs/hexpm
+hexdoc_packages:
+  - telemetry_metrics
+  - plug
+  - cors_plug
+```
+
+At the end of `SyncRepo`'s output, you should see something like:
+
+```
+Updated Hex package docs: ["telemetry_metrics", "plug", "cors_plug"]
+```
+
+Also, if a newer version of that package's documentation is ever published to HexDocs, `SyncRepos` will automatically pull it down for you.
 
 ## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
@@ -232,8 +267,10 @@ mix test
 
 ## IDEAS FOR FUTURE
 
-* Test all the "FAILURE" cases
-* Easy way to *add new* (not just *update existing*) Hex packages, possibly by listing Hex package names in the `config` file
+* Test *all* the "FAILURE" cases
+* Test *all* the cases where we want to skip processing a repo
+* Better success message when successfully installing new HexDoc package
+* Better error message when searching for non-existent HexDoc package: "Couldn't find docs for package with name hackney or version 1.15.2" or "Couldn't find docs for package with name metrics or version 2.5.0"
 * Improve documentation
 * Upload to Hex
 * User-enabled, per-repo notifications when new commits are pulled

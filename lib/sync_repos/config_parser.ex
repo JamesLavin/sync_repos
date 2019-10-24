@@ -11,7 +11,17 @@ defmodule SyncRepos.ConfigParser do
 
     git_dirs = git_dirs_from_yaml(yaml)
 
-    %{token | to_process: git_dirs, default_git_dir: default_git_dir, hex_docs_dir: hex_docs_dir}
+    hexdoc_packages =
+      hexdoc_packages_from_yaml(yaml)
+      |> IO.inspect(label: "*** hexdoc_packages ***")
+
+    %{
+      token
+      | to_process: git_dirs,
+        default_git_dir: default_git_dir,
+        hex_docs_dir: hex_docs_dir,
+        hexdoc_packages: hexdoc_packages
+    }
     |> Validator.exit_if_any_invalid_to_process_dirs()
     |> Validator.exit_if_invalid_default_git_dir()
   end
@@ -24,6 +34,11 @@ defmodule SyncRepos.ConfigParser do
 
     (yaml["git"] || [])
     |> Enum.map(fn path -> convert_path(path, default_git_dir) end)
+  end
+
+  @spec hexdoc_packages_from_yaml(nil | keyword | map) :: [String.t()]
+  def hexdoc_packages_from_yaml(yaml) do
+    yaml["hexdoc_packages"] || yaml["hexdocs_packages"] || []
   end
 
   defp convert_path(git_path, default_git_dir) do
