@@ -4,7 +4,7 @@ With a single command (which you can run periodically in a `cron` job):
 
 1. Keep all your local `Git` repos in sync with their remote counterparts; and,
 
-2. (If you use Elixir) Keep your `Hex` package documentation up to date. This pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. It also installs any new `Hex` packages you specify under `hexdoc_packages:` in `~/.sync_repos/config`.
+2. (If you use Elixir) Keep your `Hex` package documentation up to date. (`Hex` package documentation can be saved locally and used offline. See [the `mix hex.docs` documentation](https://hexdocs.pm/hex/Mix.Tasks.Hex.Docs.html) for details.) `SyncRepos` will pull down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. It also installs any new `Hex` packages you specify under `hexdoc_packages:` in `~/.sync_repos/config`.
 
 ## Git Sync Functionality
 
@@ -54,7 +54,7 @@ Each time `SyncRepos` runs, it displays command-line output and logs richer debu
 
 ##  HexDocs Updating Functionality
 
-If you use Elixir, `SyncRepos` will also keep your `Hex` package documentation up to date. This pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. It also installs any new `Hex` packages you specify under `hexdoc_packages:` in `~/.sync_repos/config`.
+If you use Elixir, `SyncRepos` will also keep your `Hex` package documentation up to date. (`Hex` package documentation can be saved locally and used offline. See [the `mix hex.docs` documentation](https://hexdocs.pm/hex/Mix.Tasks.Hex.Docs.html) for details.) `SyncRepos` pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. It also installs any new `Hex` packages you specify under `hexdoc_packages:` in `~/.sync_repos/config`.
 
 If you put into your `~/.sync_repos/config` file something like:
 
