@@ -5,6 +5,7 @@ defmodule SyncRepos.Git do
   @no_remote_changes_msg "No new changes on master"
 
   @spec sync(Token.t()) :: Token.t()
+  def sync(%Token{only_hex: true} = token), do: token
   def sync(%Token{halt: true} = token), do: token
 
   def sync(%Token{to_process: []} = token), do: token

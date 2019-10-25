@@ -2,6 +2,8 @@ defmodule SyncRepos.HexDocs do
   alias SyncRepos.Token
 
   @spec sync(Token.t()) :: Token.t()
+  def sync(%Token{only_git: true} = token), do: token
+
   def sync(%Token{hex_docs_dir: dir, hexdoc_packages: hexdoc_packages} = token)
       when is_binary(dir) do
     update_hex_packages(dir, hexdoc_packages, token)
@@ -49,12 +51,19 @@ defmodule SyncRepos.HexDocs do
   defp update_hex_docs(dir_name, token) do
     {msg, 0} = System.cmd("mix", ["hex.docs", "fetch", dir_name])
 
-    if msg =~ "Docs already fetched" do
-      token
-    else
-      IO.puts("updating docs for Hex package '#{dir_name}'")
-      updated_hex_docs = [dir_name | token.updated_hex_docs]
-      put_in(token.updated_hex_docs, updated_hex_docs)
+    cond do
+      msg =~ ~r/Docs already fetched/ ->
+        token
+
+      msg == "" ->
+        # IO.puts("*** Couldn't find docs for the package '#{dir_name}' ***")
+        IO.puts(msg)
+        token
+
+      true ->
+        IO.puts("updated docs for Hex package '#{dir_name}'")
+        updated_hex_docs = [dir_name | token.updated_hex_docs]
+        put_in(token.updated_hex_docs, updated_hex_docs)
     end
   end
 
