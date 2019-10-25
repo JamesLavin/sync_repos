@@ -5,8 +5,8 @@ defmodule SyncRepos.CommandLineParser do
     {parsed_switches, _other_args, _errors} =
       args
       |> OptionParser.parse(
-        aliases: [d: :sync_dir],
-        strict: [sync_dir: :string, debug: :boolean]
+        aliases: [d: :sync_dir, g: :only_git, h: :only_hex],
+        strict: [sync_dir: :string, debug: :boolean, only_git: :boolean, only_hex: :boolean]
       )
 
     switches_map =
@@ -20,5 +20,21 @@ defmodule SyncRepos.CommandLineParser do
 
     token
     |> Map.put(:sync_dir, token.sync_dir |> Path.expand())
+    |> update_only_git(token.only_git)
+    |> update_only_hex(token.only_hex)
   end
+
+  defp update_only_git(%Token{} = token, true) do
+    token
+    |> Map.put(:only_git, token.only_git)
+  end
+
+  defp update_only_git(%Token{} = token, _value), do: token
+
+  defp update_only_hex(%Token{} = token, true) do
+    token
+    |> Map.put(:only_hex, token.only_hex)
+  end
+
+  defp update_only_hex(%Token{} = token, _value), do: token
 end

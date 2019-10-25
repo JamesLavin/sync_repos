@@ -52,6 +52,8 @@ git:
 
 Each time `SyncRepos` runs, it displays command-line output and logs richer debugging information in a timestamped log file each time.
 
+If you want to update *only* your Git repos (not updating Hex packages), you can do so by invoking either `./sync_repos --only-git` or the equivalent `./sync_repos -g`.
+
 ##  HexDocs Updating Functionality
 
 If you use Elixir, `SyncRepos` will also keep your `Hex` package documentation up to date. (`Hex` package documentation can be saved locally and used offline. See [the `mix hex.docs` documentation](https://hexdocs.pm/hex/Mix.Tasks.Hex.Docs.html) for details.) `SyncRepos` pulls down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. It also installs any new `Hex` packages you specify under `hexdoc_packages:` in `~/.sync_repos/config`.
@@ -73,6 +75,8 @@ Updated Hex package docs: ["telemetry_metrics", "plug", "cors_plug"]
 ```
 
 Also, if a newer version of that package's documentation is ever published to HexDocs, `SyncRepos` will automatically pull it down for you.
+
+If you want to update *only* your Hex packages (not updating Git packages), you can do so by invoking either `./sync_repos --only-hex` or the equivalent `./sync_repos -h`.
 
 ## Why Did You Automate Something That Takes Seconds? Are You Stupid?
 
@@ -270,15 +274,14 @@ mix test
 * Test *all* the "FAILURE" cases
 * Test *all* the cases where we want to skip processing a repo
 * Better success message when successfully installing new HexDoc package
-* Better error message when searching for non-existent HexDoc package: "Couldn't find docs for package with name hackney or version 1.15.2" or "Couldn't find docs for package with name metrics or version 2.5.0"
 * Improve documentation
 * Upload to Hex
+* Enable downloading Erlang documentation
 * User-enabled, per-repo notifications when new commits are pulled
 * Add option to halt on failure in single repo. (Current default behavior is to attempt to sync every directory, regardless of whether any repo fails)
 * Enable optional per-repo committing of uncommitted changes
 * Add strategies for syncing other resources (besides Git repos and Hex packages)
 * Enable auto-updating of DevDogs, Dash, Zeal, etc. documentation/code browsers
-* Add option to update only Hex docs or only Git repos
 * Add option to auto-delete outdated Hex docs
 * Enable user to specify non-default Hex docs directory
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)

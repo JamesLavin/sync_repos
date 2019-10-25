@@ -11,9 +11,7 @@ defmodule SyncRepos.ConfigParser do
 
     git_dirs = git_dirs_from_yaml(yaml)
 
-    hexdoc_packages =
-      hexdoc_packages_from_yaml(yaml)
-      |> IO.inspect(label: "*** hexdoc_packages ***")
+    hexdoc_packages = yaml |> hexdoc_packages_from_yaml()
 
     %{
       token
