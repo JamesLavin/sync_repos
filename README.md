@@ -50,7 +50,7 @@ git:
   }
 ```
 
-Each time `SyncRepos` runs, it displays command-line output and logs richer debugging information in a timestamped log file each time.
+Each time `SyncRepos` runs, it displays command-line output and logs richer debugging information in a timestamped log file.
 
 If you want to update *only* your Git repos (not updating Hex packages), you can do so by invoking either `./sync_repos --only-git` or the equivalent `./sync_repos -g`.
 
@@ -74,7 +74,7 @@ At the end of `SyncRepo`'s output, you should see something like:
 Updated Hex package docs: ["telemetry_metrics", "plug", "cors_plug"]
 ```
 
-Also, if a newer version of that package's documentation is ever published to HexDocs, `SyncRepos` will automatically pull it down for you.
+Also, if a newer version of any installed Hex package's documentation is ever published to HexDocs, `SyncRepos` will automatically pull it down for you.
 
 If you want to update *only* your Hex packages (not updating Git packages), you can do so by invoking either `./sync_repos --only-hex` or the equivalent `./sync_repos -h`.
 
@@ -93,9 +93,9 @@ Keeping my Git repos in sync is especially challenging because I develop on thre
 
 I imagine other devs also waste tons of time keeping their Git repos in sync, so this will hopefully benefit you too.
 
-**WARNING**: Use at your own risk! I'm currently using this on my Git repos (on my Mac & Linux laptops... I have no idea about Windows), so I feel confident it works for my use cases, but I recommend you try it out on just a few repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
+**WARNING**: Use at your own risk! I'm currently using this on my Git repos (on my Mac & Linux laptops... I have no idea about Windows), so I feel confident it works for my use cases, but I recommend you try it on a few non-critical repos until you feel confident it meets your needs. I started creating this October 16, 2019, so it's definitely *not* battle-tested! I offer a money-back guarantee, but that's all!
 
-This script may require modification to work with different versions of Git. If you encounter a problem, please open an `Issue` in `https://github.com/JamesLavin/sync_repos/issues` and paste in the problematic log output, then I will try to update this script.
+This script may require modification to work with different versions of Git. If you encounter a problem, please open an `Issue` in [https://github.com/JamesLavin/sync_repos/issues](https://github.com/JamesLavin/sync_repos/issues) and paste in the problematic log output, then I will try to update this script.
 
 ## Usage
 
@@ -256,25 +256,29 @@ Installation steps:
 
 Alternatively, you could pull down the executable from [`sync_repos`](https://github.com/JamesLavin/sync_repos/raw/master/sync_repos) OR build and install it by pulling down this repo and running `mix do escript.build, escript.install` in this directory... for which you'll need `Elixir` and `Mix` installed). You could then put the executable somewhere on your `$PATH` (or else execute it directly -- as `./sync_repos` -- from within the same directory) OR install it via `mix` with `mix escript.install sync_repos`
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/sync_repos](https://hexdocs.pm/sync_repos).
-
 ## TESTS
 
-I've created some tests, and they're green (yay!).
+I've created some `ExDoc` tests, and they're green (yay!).
 
 You run them the normal way:
 ```
 mix test
 ```
 
+I've also created some typespecs that can be checked by `Dialyzer` with:
+
+```
+mix dialyzer
+```
+
 ## IDEAS FOR FUTURE
 
 * Test *all* the "FAILURE" cases
 * Test *all* the cases where we want to skip processing a repo
+* Explore `git_cli` (https://hexdocs.pm/git_cli/Git.html) and see if that might be helpful
 * Better success message when successfully installing new HexDoc package
-* Improve documentation
+* Improve README
+* Generate ExDoc & publish on HexDocs
 * Upload to Hex
 * Enable downloading Erlang documentation
 * User-enabled, per-repo notifications when new commits are pulled
@@ -284,6 +288,9 @@ mix test
 * Enable auto-updating of DevDogs, Dash, Zeal, etc. documentation/code browsers
 * Add option to auto-delete outdated Hex docs
 * Enable user to specify non-default Hex docs directory
+* Use https://hexdocs.pm/quantum/readme.html to enable scheduling `SyncRepos` to auto-update could run as a deployment and update Git/Hex in the background at prespecified times)
 * Add option to suppress attempts to `git pull --rebase` (option could work globally or on a per-repo basis)
+* Collect list of failed Hexdoc packages and display them
+* Parallelize operations to speed up time to completion
 * Currently works only when `master` branch is checked out: Make this work with non-`master` branches
 * Option to suppress saving all log files and instead save only the latest log file (or the last N log files?)
