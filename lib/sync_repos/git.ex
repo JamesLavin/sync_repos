@@ -22,6 +22,7 @@ defmodule SyncRepos.Git do
       |> get_branch()
       |> halt_unless_master()
       |> git_status()
+      |> process_updated_status()
 
     new_processed = [new_token.processing | new_token.processed]
     new_token = put_in(new_token.processed, new_processed)
@@ -82,11 +83,15 @@ defmodule SyncRepos.Git do
       token.processing
       |> Map.put_new(:status, status_string)
 
-    token = put_in(token.processing, new_processing)
+    token.processing
+    |> put_in(new_processing)
+  end
 
+  defp process_updated_status(token) do
     token
     |> fail_if_unstaged_changes()
     |> fail_if_uncommitted_changes()
+    |> fetch_changes()
     |> pull_and_rebase_changes()
     |> push_if_ahead_of_master()
   end
@@ -148,9 +153,16 @@ defmodule SyncRepos.Git do
     put_in(token.processing, new_processing)
   end
 
+  defp fetch_changes(%{processing: %{halt: true}} = token), do: token
+
+  defp fetch_changes(%{processing: %{status: status_string, fetch: true}} = token) do
+  end
+
+  defp fetch_changes(token), do: token
+
   defp pull_and_rebase_changes(%{processing: %{halt: true}} = token), do: token
 
-  defp pull_and_rebase_changes(%{processing: %{status: status_string}} = token)
+  defp pull_and_rebase_changes(%{processing: %{pull_rebase: true, status: status_string}} = token)
        when is_binary(status_string) do
     {pull_rebase_output, exit_code} = System.cmd("git", ["pull", "--rebase", "origin", "master"])
 
