@@ -2,9 +2,37 @@
 
 With a single command (which you can run periodically in a `cron` job):
 
-1. Keep all your local `Git` repos in sync with their remote counterparts; and,
+1. *Keep all your local `Git` repos in sync with their remote counterparts*; and,
 
-2. (If you use Elixir) Keep your `Hex` package documentation up to date. (`Hex` package documentation can be saved locally and used offline. See [the `mix hex.docs` documentation](https://hexdocs.pm/hex/Mix.Tasks.Hex.Docs.html) for details.) `SyncRepos` will pull down the most recent documentation for any already installed `Hex` packages if you add `hex_docs_dir: ~/.hex/docs/hexpm` to your `~/.sync_repos/config` file. It also installs any new `Hex` packages you specify under `hexdoc_packages:` in `~/.sync_repos/config`.
+2. (If you use Elixir) *Keep your `Hex` package documentation up to date*. (`Hex` package documentation can be saved locally and used offline. See [the `mix hex.docs` documentation](https://hexdocs.pm/hex/Mix.Tasks.Hex.Docs.html) for details.) `SyncRepos` will pull down the most recent documentation for any already installed `Hex` packages.
+
+You can control the behavior of `SyncRepos` via two mechanisms:
+
+1. You can customize which Git repos and Hex packages it updates via a YAML file stored at `~/.sync_repos/config`. For example, `hex_docs_dir: ~/.hex/docs/hexpm` tells `SyncRepos` where to save Hex files. And `SyncRepos` will install any new `Hex` packages you specify in your `hexdoc_packages:` list.
+
+2. At runtime, you can specify commandline switches to tell `SyncRepos` what to do.
+
+## Switches
+
+To ensure `SyncRepos` does only what you want, unless you specify switches, nothing will happen.
+
+You can use the following switches to customize the behavior:
+
+### Git-specific switches
+
+* `-g` = sync Git repos (without `-g` or `-a`, no Git repos will be synced)
+* `-f` = fetch the latest master branches for all Git repos using `git fetch origin master`
+* `-r` = pull the latest commits from the remote `origin` and rebase your local commits on top (using `git pull --rebase HEAD`) but don't push your local commits up to the remote `origin`
+* `-p` = pulls the latest commits from the remote `origin` and rebase your local commits on top (same as `-r`, which does a `git pull --rebase HEAD`) AND then pushes your commits up to the remote `origin` using `git push origin HEAD`
+
+### Hex-specific switches
+
+* `-h` = sync Hex repos (without `-h` or `-a`, no Hex repos will be synced)
+
+### Global switches
+
+* `-d` = specify non-default `sync_dir`
+* `-a` (this will override all Git-specific and Hex-specific settings, equivalent to `-g -p -h`)
 
 ## Git Sync Functionality
 

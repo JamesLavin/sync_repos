@@ -5,7 +5,7 @@ defmodule SyncRepos.Git do
   @no_remote_changes_msg "No new changes on master"
 
   @spec sync(Token.t()) :: Token.t()
-  def sync(%Token{only_hex: true} = token), do: token
+  def sync(%Token{sync_git: false} = token), do: token
   def sync(%Token{halt: true} = token), do: token
 
   def sync(%Token{to_process: []} = token), do: token
@@ -155,7 +155,9 @@ defmodule SyncRepos.Git do
 
   defp fetch_changes(%{processing: %{halt: true}} = token), do: token
 
-  defp fetch_changes(%{processing: %{status: status_string, fetch: true}} = token) do
+  defp fetch_changes(%{processing: %{fetch_master: true}} = token) do
+    # TODO: Fetch changes!
+    token
   end
 
   defp fetch_changes(token), do: token

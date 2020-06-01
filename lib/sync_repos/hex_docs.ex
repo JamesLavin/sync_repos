@@ -2,7 +2,7 @@ defmodule SyncRepos.HexDocs do
   alias SyncRepos.Token
 
   @spec sync(Token.t()) :: Token.t()
-  def sync(%Token{only_git: true} = token), do: token
+  def sync(%Token{sync_hex: false} = token), do: token
 
   def sync(%Token{hex_docs_dir: dir, hexdoc_packages: hexdoc_packages} = token)
       when is_binary(dir) do

@@ -1,57 +1,67 @@
 defmodule SyncRepos.Token do
   alias SyncRepos.ValidRepoDir
 
-  defstruct [
-    :default_git_dir,
-    :hex_docs_dir,
-    :sync_dir,
-    :halt,
-    :hexdoc_packages,
-    :notable_repos,
-    :only_git,
-    :only_hex,
-    :to_process,
-    :processing,
-    :processed,
-    :invalid_dirs,
-    :updated_hex_docs,
-    :timestamp,
-    debug: false
-  ]
+  defstruct all_the_things: false,
+            debug: false,
+            default_git_dir: nil,
+            fetch_master: false,
+            halt: false,
+            hex_docs_dir: nil,
+            hexdoc_packages: [],
+            invalid_dirs: [],
+            notable_repos: [],
+            processing: nil,
+            processed: [],
+            rebase_push_head: false,
+            sync_dir: "~/.sync_repos",
+            sync_git: false,
+            sync_hex: false,
+            timestamp: "",
+            to_process: [],
+            updated_hex_docs: []
 
-  # TODO: Make a type for the map()
   @type t() :: %__MODULE__{
+          all_the_things: boolean(),
+          debug: boolean(),
           default_git_dir: nil | String.t(),
-          hex_docs_dir: nil | String.t(),
-          sync_dir: String.t(),
+          fetch_master: boolean(),
           halt: boolean(),
+          hex_docs_dir: nil | String.t(),
           hexdoc_packages: [String.t()],
+          invalid_dirs: [String.t()],
           notable_repos: [String.t()],
-          only_git: boolean(),
-          only_hex: boolean(),
-          to_process: [ValidRepoDir.t()],
           processing: nil | ValidRepoDir.t(),
           processed: [ValidRepoDir.t()],
-          invalid_dirs: [String.t()],
-          updated_hex_docs: [String.t()],
-          timestamp: nil | String.t()
+          pull_master: boolean(),
+          rebase_push_head: boolean(),
+          sync_dir: String.t(),
+          sync_git: boolean(),
+          sync_hex: boolean(),
+          timestamp: nil | String.t(),
+          to_process: [ValidRepoDir.t()],
+          updated_hex_docs: [String.t()]
         }
 
-  def new do
-    %__MODULE__{
-      default_git_dir: nil,
-      hex_docs_dir: nil,
-      sync_dir: "~/.sync_repos",
-      halt: false,
-      notable_repos: [],
-      only_git: false,
-      only_hex: false,
-      to_process: [],
-      processing: nil,
-      processed: [],
-      invalid_dirs: [],
-      updated_hex_docs: [],
-      timestamp: ""
-    }
-  end
+  # def new do
+  #   %__MODULE__{
+  #     debug: false,
+  #     default_git_dir: nil,
+  #     fetch_master: true,
+  #     halt: false,
+  #     hex_docs_dir: nil,
+  #     hexdoc_packages: [],
+  #     invalid_dirs: [],
+  #     notable_repos: [],
+  #     processing: nil,
+  #     processed: [],
+  #     pull_master: false,
+  #     rebase_push_head: false,
+  #     sync_dir: "~/.sync_repos",
+  #     sync_git: true,
+  #     sync_hex: true,
+  #     timestamp: "",
+  #     to_process: [],
+  #     updated_hex_docs: []
+  #   }
+  # end
 end
